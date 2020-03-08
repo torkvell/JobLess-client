@@ -2,8 +2,12 @@
 
 /*--------------------SIGN UP--------------------*/
 
-export function signUp(firstName, lastName, email, password) {
+export function registerHandler(name, email, password) {
   return async function(dispatch, getState) {
+    console.log(`name: ${name}, email: ${email}, password: ${password}`);
+    if (10 === 11) {
+      dispatch(signUpSuccess(name));
+    }
     // try {
     //   const response = await axios.post("http://localhost:4000/user/signup", {
     //     firstName,
@@ -34,7 +38,7 @@ export function signUp(firstName, lastName, email, password) {
 }
 
 function signUpSuccess(data) {
-  return { type: "USER_CREATED", payload: data };
+  return { type: 'USER_CREATED', payload: data };
 }
 
 /*--------------------LOGIN--------------------*/
@@ -68,8 +72,8 @@ export function logIn(email, password) {
 
 function loginSuccess(data) {
   return {
-    type: "LOGIN_SUCCESS",
-    payload: data
+    type: 'LOGIN_SUCCESS',
+    payload: data,
   };
 }
 
@@ -82,5 +86,5 @@ export function logOut() {
 }
 
 function logOutSuccess() {
-  return { type: "USER_LOGOUT" };
+  return { type: 'USER_LOGOUT' };
 }

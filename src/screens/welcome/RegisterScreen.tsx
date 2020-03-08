@@ -7,18 +7,21 @@ import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 import BackButton from '../../components/BackButton';
 import { theme } from '../../core/theme';
-import { Navigation } from '../../types';
+// import { Navigation, RegisterHandler } from '../../types';
 import {
   emailValidator,
   passwordValidator,
   nameValidator,
 } from '../../core/utils';
+import { connect } from 'react-redux';
+import { registerHandler } from '../../store/user/actions.js';
 
-type Props = {
-  navigation: Navigation;
-};
+// type Props = {
+//   navigation: Navigation;
+//   registerHandler: RegisterHandler;
+// };
 
-const RegisterScreen = ({ navigation }: Props) => {
+const RegisterScreen = ({ navigation, registerHandler }) => {
   const [name, setName] = useState({ value: '', error: '' });
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
@@ -34,8 +37,8 @@ const RegisterScreen = ({ navigation }: Props) => {
       setPassword({ ...password, error: passwordError });
       return;
     }
-
-    navigation.navigate('Dashboard');
+    registerHandler(name.value, email.value, password.value);
+    // navigation.navigate('Dashboard');
   };
 
   return (
@@ -109,4 +112,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(RegisterScreen);
+const mapStateToProps = state => {
+  return {
+    user: state.user,
+  };
+};
+
+export default memo(
+  connect(mapStateToProps, { registerHandler })(RegisterScreen)
+);
+// export default memo(RegisterScreen);
