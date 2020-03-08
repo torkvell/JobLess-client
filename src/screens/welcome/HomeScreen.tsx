@@ -13,9 +13,9 @@ type Props = {
 const HomeScreen = ({ navigation }: Props) => (
   <Background>
     <Logo />
-    <Header>Welcome to LocalJob</Header>
+    <Header>Welcome to JobLess</Header>
 
-    <Paragraph>The easiest way to find small local jobs</Paragraph>
+    <Paragraph>The easiest way for jobless people to find local work</Paragraph>
     <Button mode="contained" onPress={() => navigation.navigate('LoginScreen')}>
       Login
     </Button>
