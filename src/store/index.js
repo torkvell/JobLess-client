@@ -1,9 +1,9 @@
 // Imports: Dependencies
 import { AsyncStorage } from 'react-native';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import { createLogger } from 'redux-logger';
 import { persistStore, persistReducer } from 'redux-persist';
-// Imports: Redux
+import ReduxThunk from 'redux-thunk';
 import rootReducer from './rootReducer';
 // Middleware: Redux Persist Config
 const persistConfig = {
@@ -18,8 +18,13 @@ const persistConfig = {
 };
 // Middleware: Redux Persist Persisted Reducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
+// Middleware: ReduxThunk
+const enhancer = compose(
+  applyMiddleware(ReduxThunk),
+  applyMiddleware(createLogger())
+);
 // Redux: Store
-const store = createStore(persistedReducer, applyMiddleware(createLogger()));
+const store = createStore(persistedReducer, enhancer);
 // Middleware: Redux Persist Persister
 let persistor = persistStore(store);
 // Exports
