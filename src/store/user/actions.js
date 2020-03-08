@@ -2,9 +2,11 @@
 
 /*--------------------SIGN UP--------------------*/
 
-export function registerHandler(name, email, password) {
+export function registerHandler(name, email, password, country, jobless) {
   return async function(dispatch, getState) {
-    console.log(`name: ${name}, email: ${email}, password: ${password}`);
+    console.log(
+      `name: ${name}, email: ${email}, password: ${password}, country: ${country}, jobless: ${jobless}`
+    );
     if (10 === 11) {
       dispatch(signUpSuccess(name));
     }
