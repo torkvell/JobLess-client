@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Picker } from 'react-native';
 import Background from '../../components/Background';
 import Logo from '../../components/Logo';
 import Header from '../../components/Header';
@@ -15,6 +15,10 @@ import {
 } from '../../core/utils';
 import { connect } from 'react-redux';
 import { registerHandler } from '../../store/user/actions.js';
+import CountryPicker, {
+  getAllCountries,
+} from 'react-native-country-picker-modal';
+import { black } from 'react-native-paper/lib/typescript/src/styles/colors';
 
 // type Props = {
 //   navigation: Navigation;
@@ -25,6 +29,14 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
   const [name, setName] = useState({ value: '', error: '' });
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
+  const [countryCode, setCountryCode] = useState(null);
+  const [country, setCountry] = useState(null);
+  const [jobless, setJobless] = useState({ value: 'true', error: '' });
+
+  const onSelect = country => {
+    setCountryCode(country.cca2);
+    setCountry(country);
+  };
 
   const _onSignUpPressed = () => {
     const nameError = nameValidator(name.value);
@@ -37,7 +49,13 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
       setPassword({ ...password, error: passwordError });
       return;
     }
-    registerHandler(name.value, email.value, password.value);
+    registerHandler(
+      name.value,
+      email.value,
+      password.value,
+      country.name,
+      jobless.value
+    );
     // navigation.navigate('Dashboard');
   };
 
@@ -80,11 +98,34 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
         errorText={password.error}
         secureTextEntry
       />
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={jobless.value}
+          onValueChange={(itemValue, itemIndex) =>
+            setJobless({ value: itemValue, error: '' })
+          }
+        >
+          <Picker.Item label="I am jobless" value="true" />
+          <Picker.Item label="I am a job provider" value="false" />
+        </Picker>
+      </View>
 
+      <CountryPicker
+        {...{
+          countryCode,
+          withFilter: true,
+          withFlag: true,
+          withCountryNameButton: true,
+          withAlphaFilter: false,
+          withCallingCode: false,
+          withEmoji: true,
+          onSelect,
+        }}
+      />
+      <Text style={styles.instructions}>Press above to choose country</Text>
       <Button mode="contained" onPress={_onSignUpPressed} style={styles.button}>
         Sign Up
       </Button>
-
       <View style={styles.row}>
         <Text style={styles.label}>Already have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
@@ -96,6 +137,15 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
 };
 
 const styles = StyleSheet.create({
+  pickerContainer: {
+    width: '100%',
+    height: '7%',
+    marginVertical: 12,
+    borderColor: 'rgba(0, 0, 0, 0.54)',
+    borderRadius: 4,
+    borderWidth: 1,
+    backgroundColor: theme.colors.surface,
+  },
   label: {
     color: theme.colors.secondary,
   },
@@ -109,6 +159,12 @@ const styles = StyleSheet.create({
   link: {
     fontWeight: 'bold',
     color: theme.colors.primary,
+  },
+  instructions: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#888',
+    marginBottom: 0,
   },
 });
 

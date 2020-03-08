@@ -1,13 +1,10 @@
-// import axios from "axios";
-
 /*--------------------SIGN UP--------------------*/
 
-export function registerHandler(name, email, password) {
+export function registerHandler(name, email, password, country, jobless) {
   return async function(dispatch, getState) {
-    console.log(`name: ${name}, email: ${email}, password: ${password}`);
-    if (10 === 11) {
-      dispatch(signUpSuccess(name));
-    }
+    console.log(
+      `name: ${name}, email: ${email}, password: ${password}, country: ${country}, jobless: ${jobless}`
+    );
     // try {
     //   const response = await axios.post("http://localhost:4000/user/signup", {
     //     firstName,
