@@ -1,5 +1,12 @@
 import React, { memo, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Picker } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Picker,
+  Platform,
+} from 'react-native';
 import Background from '../../components/Background';
 import Logo from '../../components/Logo';
 import Header from '../../components/Header';
@@ -20,6 +27,7 @@ import CountryPicker, {
 } from 'react-native-country-picker-modal';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
+import ModalPicker from 'react-native-modal-picker';
 
 const REGISTER_USER = gql`
   mutation RegisterUser(
@@ -30,11 +38,11 @@ const REGISTER_USER = gql`
     $jobless: Boolean!
   ) {
     addUser(
-      name: "Toralf"
-      email: "tor.kvell@outlook.com"
-      password: "something"
-      country: "norway"
-      jobless: false
+      name: $name
+      email: $email
+      password: $password
+      country: $country
+      jobless: $jobless
     ) {
       name
       email
@@ -49,15 +57,15 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
   const [countryCode, setCountryCode] = useState(null);
-  const [country, setCountry] = useState(null);
-  const [jobless, setJobless] = useState({ value: 'true', error: '' });
+  const [country, setCountry] = useState({ value: '', error: '' });
+  const [jobless, setJobless] = useState({ value: true, error: '' });
 
   const onSelect = country => {
     setCountryCode(country.cca2);
-    setCountry(country);
+    setCountry({ ...country, value: country.name });
   };
 
-  const _onSignUpPressed = () => {
+  const validateInput = () => {
     const nameError = nameValidator(name.value);
     const emailError = emailValidator(email.value);
     const passwordError = passwordValidator(password.value);
@@ -66,17 +74,26 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
       setName({ ...name, error: nameError });
       setEmail({ ...email, error: emailError });
       setPassword({ ...password, error: passwordError });
-      return;
+      return false;
     }
-    // registerHandler(
-    //   name.value,
-    //   email.value,
-    //   password.value,
-    //   country.name,
-    //   jobless.value
-    // );
-    // navigation.navigate('Dashboard');
+    return true;
   };
+
+  const CustomPicker =
+    Platform.OS === 'ios' ? (
+      <Text>TODO</Text>
+    ) : (
+      <Picker
+        selectedValue={jobless.value}
+        onValueChange={(itemValue, itemIndex) => {
+          const newValue = itemValue === 'true' ? true : false;
+          setJobless({ value: newValue, error: '' });
+        }}
+      >
+        <Picker.Item label="I am jobless" value="true" />
+        <Picker.Item label="I am a job provider" value="false" />
+      </Picker>
+    );
 
   return (
     <Background>
@@ -117,18 +134,7 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
         errorText={password.error}
         secureTextEntry
       />
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={jobless.value}
-          onValueChange={(itemValue, itemIndex) =>
-            setJobless({ value: itemValue, error: '' })
-          }
-        >
-          <Picker.Item label="I am jobless" value="true" />
-          <Picker.Item label="I am a job provider" value="false" />
-        </Picker>
-      </View>
-
+      <View style={styles.pickerContainer}>{CustomPicker}</View>
       <CountryPicker
         {...{
           countryCode,
@@ -142,16 +148,31 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
         }}
       />
       <Text style={styles.instructions}>Press above to choose country</Text>
-      {/* <Mutation
-        mutation={REGISTER_USER}
-        variables={{}}
-        onCompleted={() => this.props.history.push('/new/1')}
-      >
-        {postMutation => <button onClick={postMutation}>Submit</button>}
-      </Mutation> */}
-      <Button mode="contained" onPress={_onSignUpPressed} style={styles.button}>
-        Sign Up
-      </Button>
+
+      <Mutation mutation={REGISTER_USER}>
+        {(addUser, { data }) => (
+          <Button
+            mode="contained"
+            onPress={() => {
+              if (validateInput()) {
+                addUser({
+                  variables: {
+                    name: name.value,
+                    email: email.value,
+                    password: password.value,
+                    country: country.value,
+                    jobless: jobless.value,
+                  },
+                }).then(res => navigation.navigate('LoginScreen'));
+              }
+            }}
+            style={styles.button}
+          >
+            Sign Up
+          </Button>
+        )}
+      </Mutation>
+
       <View style={styles.row}>
         <Text style={styles.label}>Already have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
