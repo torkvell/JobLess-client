@@ -18,13 +18,31 @@ import {
 import CountryPicker, {
   getAllCountries,
 } from 'react-native-country-picker-modal';
-import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import { Mutation } from 'react-apollo';
 
-// type Props = {
-//   navigation: Navigation;
-//   registerHandler: RegisterHandler;
-// };
+const REGISTER_USER = gql`
+  mutation RegisterUser(
+    $name: String!
+    $email: String!
+    $password: String!
+    $country: String!
+    $jobless: Boolean!
+  ) {
+    addUser(
+      name: "Toralf"
+      email: "tor.kvell@outlook.com"
+      password: "something"
+      country: "norway"
+      jobless: false
+    ) {
+      name
+      email
+      country
+      jobless
+    }
+  }
+`;
 
 const RegisterScreen = ({ navigation, registerHandler }) => {
   const [name, setName] = useState({ value: '', error: '' });
@@ -33,19 +51,6 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
   const [countryCode, setCountryCode] = useState(null);
   const [country, setCountry] = useState(null);
   const [jobless, setJobless] = useState({ value: 'true', error: '' });
-
-  const [addUser, { loading }] = useMutation(REGISTER_USER, {
-    update(proxy, result) {
-      console.log(result);
-    },
-    variables: {
-      name: name.value,
-      email: email.value,
-      password: password.value,
-      jobless: jobless.value,
-      country: country.value,
-    },
-  });
 
   const onSelect = country => {
     setCountryCode(country.cca2);
@@ -63,7 +68,6 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
       setPassword({ ...password, error: passwordError });
       return;
     }
-    addUser();
     // registerHandler(
     //   name.value,
     //   email.value,
@@ -138,6 +142,13 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
         }}
       />
       <Text style={styles.instructions}>Press above to choose country</Text>
+      {/* <Mutation
+        mutation={REGISTER_USER}
+        variables={{}}
+        onCompleted={() => this.props.history.push('/new/1')}
+      >
+        {postMutation => <button onClick={postMutation}>Submit</button>}
+      </Mutation> */}
       <Button mode="contained" onPress={_onSignUpPressed} style={styles.button}>
         Sign Up
       </Button>
@@ -182,32 +193,6 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
 });
-
-const REGISTER_USER = gql`
-  mutation register(
-    $name: String!
-    $email: String!
-    $password: String!
-    $jobless: String!
-    $country: String!
-  ) {
-    addUser(
-      args: {
-        name: $name
-        email: $email
-        password: $password
-        jobless: $jobless
-        country: $country
-      }
-    ) {
-      id
-      name
-      email
-      country
-      token
-    }
-  }
-`;
 
 // const mapStateToProps = state => {
 //   return {
