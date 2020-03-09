@@ -13,12 +13,13 @@ import {
   passwordValidator,
   nameValidator,
 } from '../../core/utils';
-import { connect } from 'react-redux';
-import { registerHandler } from '../../store/user/actions.js';
+// import { connect } from 'react-redux';
+// import { registerHandler } from '../../store/user/actions.js';
 import CountryPicker, {
   getAllCountries,
 } from 'react-native-country-picker-modal';
-import { black } from 'react-native-paper/lib/typescript/src/styles/colors';
+import { useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 // type Props = {
 //   navigation: Navigation;
@@ -32,6 +33,19 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
   const [countryCode, setCountryCode] = useState(null);
   const [country, setCountry] = useState(null);
   const [jobless, setJobless] = useState({ value: 'true', error: '' });
+
+  const [addUser, { loading }] = useMutation(REGISTER_USER, {
+    update(proxy, result) {
+      console.log(result);
+    },
+    variables: {
+      name: name.value,
+      email: email.value,
+      password: password.value,
+      jobless: jobless.value,
+      country: country.value,
+    },
+  });
 
   const onSelect = country => {
     setCountryCode(country.cca2);
@@ -49,13 +63,14 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
       setPassword({ ...password, error: passwordError });
       return;
     }
-    registerHandler(
-      name.value,
-      email.value,
-      password.value,
-      country.name,
-      jobless.value
-    );
+    addUser();
+    // registerHandler(
+    //   name.value,
+    //   email.value,
+    //   password.value,
+    //   country.name,
+    //   jobless.value
+    // );
     // navigation.navigate('Dashboard');
   };
 
@@ -168,13 +183,39 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = state => {
-  return {
-    user: state.user,
-  };
-};
+const REGISTER_USER = gql`
+  mutation register(
+    $name: String!
+    $email: String!
+    $password: String!
+    $jobless: String!
+    $country: String!
+  ) {
+    addUser(
+      args: {
+        name: $name
+        email: $email
+        password: $password
+        jobless: $jobless
+        country: $country
+      }
+    ) {
+      id
+      name
+      email
+      country
+      token
+    }
+  }
+`;
 
-export default memo(
-  connect(mapStateToProps, { registerHandler })(RegisterScreen)
-);
-// export default memo(RegisterScreen);
+// const mapStateToProps = state => {
+//   return {
+//     user: state.user,
+//   };
+// };
+
+// export default memo(
+//   connect(mapStateToProps, { registerHandler })(RegisterScreen)
+// );
+export default memo(RegisterScreen);

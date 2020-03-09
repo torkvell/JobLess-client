@@ -1,10 +1,46 @@
+import { gql } from 'apollo-boost';
+import { useMutation } from '@apollo/react-hooks';
+
+// const REGISTER_USER = gql`
+//   mutation AddUser(
+//     $name: String!
+//     $email: String!
+//     $password: String!
+//     $country: String!
+//     $jobless: Boolean!
+//   ) {
+//     addUser(
+//       $name: String!
+//       $email: String!
+//       $password: String!
+//       $country: String!
+//       $jobless: Boolean!) {
+//       name
+//       email
+//       password
+//       country
+//       jobless
+//     }
+//   }
+// `;
 /*--------------------SIGN UP--------------------*/
 
 export function registerHandler(name, email, password, country, jobless) {
-  return async function(dispatch, getState) {
+  return function(dispatch, getState) {
     console.log(
       `name: ${name}, email: ${email}, password: ${password}, country: ${country}, jobless: ${jobless}`
     );
+    client
+      .query({
+        query: gql`
+          {
+            user(id: ${userId}) {
+              name
+            }
+          }
+        `,
+      })
+      .then(result => console.log(result));
     // try {
     //   const response = await axios.post("http://localhost:4000/user/signup", {
     //     firstName,
