@@ -9,24 +9,13 @@ const initialState = {
 
 export default (state = initialState, action = {}) => {
   switch (action.type) {
-    case 'USER_SIGNUP':
-      return { ...state, accountCreated: true };
     case 'ERROR':
       console.log(`error reducer`);
       return { ...state, error: action.payload };
-    case 'USER_LOGOUT':
+    case 'LOGOUT_SUCCESS':
       return { ...initialState };
     case 'LOGIN_SUCCESS':
       const { id, name, email, country, jobless, token } = action.payload.login;
-      console.log(
-        'reducer for login output:',
-        id,
-        name,
-        email,
-        country,
-        jobless,
-        token
-      );
       return {
         ...state,
         id,

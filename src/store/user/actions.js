@@ -1,76 +1,3 @@
-// const REGISTER_USER = gql`
-//   mutation AddUser(
-//     $name: String!
-//     $email: String!
-//     $password: String!
-//     $country: String!
-//     $jobless: Boolean!
-//   ) {
-//     addUser(
-//       $name: String!
-//       $email: String!
-//       $password: String!
-//       $country: String!
-//       $jobless: Boolean!) {
-//       name
-//       email
-//       password
-//       country
-//       jobless
-//     }
-//   }
-// `;
-/*--------------------SIGN UP--------------------*/
-
-export function registerHandler(name, email, password, country, jobless) {
-  return function(dispatch, getState) {
-    console.log(
-      `name: ${name}, email: ${email}, password: ${password}, country: ${country}, jobless: ${jobless}`
-    );
-    client
-      .query({
-        query: gql`
-          {
-            user(id: ${userId}) {
-              name
-            }
-          }
-        `,
-      })
-      .then(result => console.log(result));
-    // try {
-    //   const response = await axios.post("http://localhost:4000/user/signup", {
-    //     firstName,
-    //     lastName,
-    //     email,
-    //     password
-    //   });
-    //   // Success 🎉
-    //   dispatch(signUpSuccess(response.data));
-    //   dispatch(errorHandler(null));
-    // } catch (error) {
-    //   //https://github.com/axios/axios#handling-errors
-    //   // Error 😨
-    //   if (error.response) {
-    //     dispatch(errorHandler(error.response.data));
-    //   } else if (error.request) {
-    //     dispatch(
-    //       errorHandler(
-    //         "Something went wrong. The request was made but no response from server was received"
-    //       )
-    //     );
-    //   } else {
-    //     dispatch(errorHandler(`Something went wrong: ${error.message}`));
-    //   }
-    //   // console.log(error);
-    // }
-  };
-}
-
-function signUpSuccess(data) {
-  return { type: 'USER_CREATED', payload: data };
-}
-
 /*--------------------LOGIN--------------------*/
 
 export function loginThunk(data) {
@@ -95,5 +22,8 @@ export function logOut() {
 }
 
 function logOutSuccess() {
-  return { type: 'USER_LOGOUT' };
+  return { type: 'LOGOUT_SUCCESS' };
 }
+
+/*--------------------SIGN UP--------------------*/
+//This is done on the RegisterScreen with Apollo mutation component
