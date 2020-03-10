@@ -14,17 +14,13 @@ import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 import BackButton from '../../components/BackButton';
 import { theme } from '../../core/theme';
-// import { Navigation, RegisterHandler } from '../../types';
+import { Navigation } from '../../types';
 import {
   emailValidator,
   passwordValidator,
   nameValidator,
 } from '../../core/utils';
-// import { connect } from 'react-redux';
-// import { registerHandler } from '../../store/user/actions.js';
-import CountryPicker, {
-  getAllCountries,
-} from 'react-native-country-picker-modal';
+import CountryPicker from 'react-native-country-picker-modal';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 
@@ -51,12 +47,16 @@ const REGISTER_USER = gql`
   }
 `;
 
-const RegisterScreen = ({ navigation, registerHandler }) => {
+type Props = {
+  navigation: Navigation;
+};
+
+const RegisterScreen = ({ navigation }: Props) => {
   const [name, setName] = useState({ value: '', error: '' });
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
   const [countryCode, setCountryCode] = useState(null);
-  const [country, setCountry] = useState({ value: '', error: '' });
+  const [country, setCountry] = useState({ value: null, error: '' });
   const [jobless, setJobless] = useState({ value: true, error: '' });
 
   const onSelect = country => {
@@ -68,7 +68,6 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
     const nameError = nameValidator(name.value);
     const emailError = emailValidator(email.value);
     const passwordError = passwordValidator(password.value);
-
     if (emailError || passwordError || nameError) {
       setName({ ...name, error: nameError });
       setEmail({ ...email, error: emailError });
@@ -78,6 +77,8 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
     return true;
   };
 
+  /*TODO: The default RN picker renders badly on ios, therefore have to render different picker components
+  A better UX can be done by placing the picker option as a separate screen with two buttons instead*/
   const CustomPicker =
     Platform.OS === 'ios' ? (
       <Text>TODO</Text>
@@ -97,11 +98,8 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
   return (
     <Background>
       <BackButton goBack={() => navigation.navigate('HomeScreen')} />
-
       <Logo />
-
       <Header>Create Account</Header>
-
       <TextInput
         label="Name"
         returnKeyType="next"
@@ -110,7 +108,6 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
         error={!!name.error}
         errorText={name.error}
       />
-
       <TextInput
         label="Email"
         returnKeyType="next"
@@ -123,7 +120,6 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
         textContentType="emailAddress"
         keyboardType="email-address"
       />
-
       <TextInput
         label="Password"
         returnKeyType="done"
@@ -147,31 +143,37 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
         }}
       />
       <Text style={styles.instructions}>Press above to choose country</Text>
-
       <Mutation mutation={REGISTER_USER}>
-        {(addUser, { data }) => (
-          <Button
-            mode="contained"
-            onPress={() => {
-              if (validateInput()) {
-                addUser({
-                  variables: {
-                    name: name.value,
-                    email: email.value,
-                    password: password.value,
-                    country: country.value,
-                    jobless: jobless.value,
-                  },
-                }).then(res => navigation.navigate('LoginScreen'));
-              }
-            }}
-            style={styles.button}
-          >
-            Sign Up
-          </Button>
+        {(addUser, { data, error }) => (
+          <View style={styles.submitContainer}>
+            {error && (
+              <Text style={styles.error}>{error.graphQLErrors[0].message}</Text>
+            )}
+            <Button
+              mode="contained"
+              onPress={() => {
+                if (validateInput()) {
+                  addUser({
+                    variables: {
+                      name: name.value,
+                      email: email.value,
+                      password: password.value,
+                      country: country.value,
+                      jobless: jobless.value,
+                    },
+                  }).then(
+                    response =>
+                      response.data && navigation.navigate('LoginScreen')
+                  );
+                }
+              }}
+              style={styles.button}
+            >
+              Sign Up
+            </Button>
+          </View>
         )}
       </Mutation>
-
       <View style={styles.row}>
         <Text style={styles.label}>Already have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
@@ -183,6 +185,14 @@ const RegisterScreen = ({ navigation, registerHandler }) => {
 };
 
 const styles = StyleSheet.create({
+  error: {
+    fontSize: 14,
+    color: theme.colors.error,
+    textAlign: 'center',
+  },
+  submitContainer: {
+    width: '100%',
+  },
   pickerContainer: {
     width: '100%',
     height: '7%',
@@ -214,13 +224,4 @@ const styles = StyleSheet.create({
   },
 });
 
-// const mapStateToProps = state => {
-//   return {
-//     user: state.user,
-//   };
-// };
-
-// export default memo(
-//   connect(mapStateToProps, { registerHandler })(RegisterScreen)
-// );
 export default memo(RegisterScreen);
