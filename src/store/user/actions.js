@@ -1,6 +1,3 @@
-import { gql } from 'apollo-boost';
-import { useMutation } from '@apollo/react-hooks';
-
 // const REGISTER_USER = gql`
 //   mutation AddUser(
 //     $name: String!
@@ -76,30 +73,9 @@ function signUpSuccess(data) {
 
 /*--------------------LOGIN--------------------*/
 
-export function logIn(email, password) {
-  return async function(dispatch, getState) {
-    // try {
-    //   const response = await axios.post("http://localhost:4000/user/login", {
-    //     email,
-    //     password
-    //   });
-    //   // Success 🎉
-    //   dispatch(loginSuccess(response.data));
-    //   dispatch(errorHandler(null));
-    // } catch (error) {
-    //   // Error 😨
-    //   if (error.response) {
-    //     dispatch(errorHandler(error.response.data));
-    //   } else if (error.request) {
-    //     dispatch(
-    //       errorHandler(
-    //         "Something went wrong. The request was made but no response from server was received"
-    //       )
-    //     );
-    //   } else {
-    //     dispatch(errorHandler(`Something went wrong: ${error.message}`));
-    //   }
-    // }
+export function loginThunk(data) {
+  return function(dispatch) {
+    if (data) return dispatch(loginSuccess(data));
   };
 }
 

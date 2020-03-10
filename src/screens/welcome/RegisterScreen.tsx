@@ -27,7 +27,6 @@ import CountryPicker, {
 } from 'react-native-country-picker-modal';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
-import ModalPicker from 'react-native-modal-picker';
 
 const REGISTER_USER = gql`
   mutation RegisterUser(
