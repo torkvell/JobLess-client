@@ -9,6 +9,21 @@ import BackButton from '../../components/BackButton';
 import { theme } from '../../core/theme';
 import { emailValidator, passwordValidator } from '../../core/utils';
 import { Navigation } from '../../types';
+import gql from 'graphql-tag';
+import { Mutation } from 'react-apollo';
+
+const LOGIN_USER = gql`
+  mutation LoginUSer($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      id
+      name
+      email
+      country
+      jobless
+      token
+    }
+  }
+`;
 
 type Props = {
   navigation: Navigation;
@@ -18,17 +33,16 @@ const LoginScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
 
-  const _onLoginPressed = () => {
+  const validateInput = () => {
     const emailError = emailValidator(email.value);
     const passwordError = passwordValidator(password.value);
 
     if (emailError || passwordError) {
       setEmail({ ...email, error: emailError });
       setPassword({ ...password, error: passwordError });
-      return;
+      return false;
     }
-
-    navigation.navigate('Dashboard');
+    return true;
   };
 
   return (
@@ -69,10 +83,28 @@ const LoginScreen = ({ navigation }: Props) => {
           <Text style={styles.label}>Forgot your password?</Text>
         </TouchableOpacity>
       </View>
-
-      <Button mode="contained" onPress={_onLoginPressed}>
-        Login
-      </Button>
+      <Mutation mutation={LOGIN_USER}>
+        {(login, { data }) => (
+          <Button
+            mode="contained"
+            onPress={() => {
+              if (validateInput()) {
+                login({
+                  variables: {
+                    email: email.value,
+                    password: password.value,
+                  },
+                }).then(
+                  () => console.log(`data after login!!!`, data)
+                  // navigation.navigate('Dashboard')
+                );
+              }
+            }}
+          >
+            Login
+          </Button>
+        )}
+      </Mutation>
 
       <View style={styles.row}>
         <Text style={styles.label}>Don’t have an account? </Text>
