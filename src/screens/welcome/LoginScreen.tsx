@@ -9,11 +9,13 @@ import BackButton from '../../components/BackButton';
 import { theme } from '../../core/theme';
 import { emailValidator, passwordValidator } from '../../core/utils';
 import { Navigation } from '../../types';
-import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
+import { connect } from 'react-redux';
+import { loginThunk } from '../../store/user/actions.js';
+import gql from 'graphql-tag';
 
 const LOGIN_USER = gql`
-  mutation LoginUSer($email: String!, $password: String!) {
+  mutation LoginUser($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       id
       name
@@ -27,32 +29,30 @@ const LOGIN_USER = gql`
 
 type Props = {
   navigation: Navigation;
+  loginThunk: (data: Object) => void;
 };
 
-const LoginScreen = ({ navigation }: Props) => {
+const LoginScreen = ({ navigation, loginThunk }: Props) => {
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
 
   const validateInput = () => {
     const emailError = emailValidator(email.value);
     const passwordError = passwordValidator(password.value);
-
     if (emailError || passwordError) {
       setEmail({ ...email, error: emailError });
       setPassword({ ...password, error: passwordError });
       return false;
+    } else {
+      return true;
     }
-    return true;
   };
 
   return (
     <Background>
       <BackButton goBack={() => navigation.navigate('HomeScreen')} />
-
       <Logo />
-
       <Header>Welcome back.</Header>
-
       <TextInput
         label="Email"
         returnKeyType="next"
@@ -65,7 +65,6 @@ const LoginScreen = ({ navigation }: Props) => {
         textContentType="emailAddress"
         keyboardType="email-address"
       />
-
       <TextInput
         label="Password"
         returnKeyType="done"
@@ -75,7 +74,6 @@ const LoginScreen = ({ navigation }: Props) => {
         errorText={password.error}
         secureTextEntry
       />
-
       <View style={styles.forgotPassword}>
         <TouchableOpacity
           onPress={() => navigation.navigate('ForgotPasswordScreen')}
@@ -84,28 +82,34 @@ const LoginScreen = ({ navigation }: Props) => {
         </TouchableOpacity>
       </View>
       <Mutation mutation={LOGIN_USER}>
-        {(login, { data }) => (
-          <Button
-            mode="contained"
-            onPress={() => {
-              if (validateInput()) {
-                login({
-                  variables: {
-                    email: email.value,
-                    password: password.value,
-                  },
-                }).then(
-                  () => console.log(`data after login!!!`, data)
-                  // navigation.navigate('Dashboard')
-                );
-              }
-            }}
-          >
-            Login
-          </Button>
+        {(login, { data, error }) => (
+          <View style={styles.submitContainer}>
+            {error && (
+              <Text style={styles.error}>{error.graphQLErrors[0].message}</Text>
+            )}
+            <Button
+              mode="contained"
+              onPress={() => {
+                if (validateInput()) {
+                  login({
+                    variables: {
+                      email: email.value,
+                      password: password.value,
+                    },
+                  }).then(response => {
+                    if (response.data) {
+                      loginThunk(response.data);
+                      navigation.navigate('Dashboard');
+                    }
+                  });
+                }
+              }}
+            >
+              Login
+            </Button>
+          </View>
         )}
       </Mutation>
-
       <View style={styles.row}>
         <Text style={styles.label}>Don’t have an account? </Text>
         <TouchableOpacity onPress={() => navigation.navigate('RegisterScreen')}>
@@ -117,6 +121,14 @@ const LoginScreen = ({ navigation }: Props) => {
 };
 
 const styles = StyleSheet.create({
+  error: {
+    fontSize: 14,
+    color: theme.colors.error,
+    textAlign: 'center',
+  },
+  submitContainer: {
+    width: '100%',
+  },
   forgotPassword: {
     width: '100%',
     alignItems: 'flex-end',
@@ -135,4 +147,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(LoginScreen);
+export default memo(connect(null, { loginThunk })(LoginScreen));

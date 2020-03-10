@@ -1,26 +1,40 @@
 const initialState = {
-  id: false,
-  email: false,
+  id: null,
+  name: null,
+  email: null,
+  country: null,
+  jobless: null,
   token: null,
-  tickets: null,
-  events: null,
-  error: null
 };
 
 export default (state = initialState, action = {}) => {
   switch (action.type) {
-    case "USER_SIGNUP":
+    case 'USER_SIGNUP':
       return { ...state, accountCreated: true };
-    case "ERROR":
+    case 'ERROR':
+      console.log(`error reducer`);
       return { ...state, error: action.payload };
-    case "USER_LOGOUT":
+    case 'USER_LOGOUT':
       return { ...initialState };
-    case "USER_LOGIN":
+    case 'LOGIN_SUCCESS':
+      const { id, name, email, country, jobless, token } = action.payload.login;
+      console.log(
+        'reducer for login output:',
+        id,
+        name,
+        email,
+        country,
+        jobless,
+        token
+      );
       return {
         ...state,
-        id: action.payload.id,
-        email: action.payload.email,
-        token: action.payload.token
+        id,
+        name,
+        email,
+        country,
+        jobless,
+        token,
       };
     default:
       return state;
