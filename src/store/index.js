@@ -14,7 +14,7 @@ const persistConfig = {
   // Whitelist (Save Specific Reducers)
   // whitelist: ["authReducer"],
   // Blacklist (Don't Save Specific Reducers)
-  // blacklist: ["counterReducer"]
+  // blacklist: ["someReducerNotToStore"]
 };
 // Middleware: Redux Persist Persisted Reducer
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -27,5 +27,4 @@ const enhancer = compose(
 const store = createStore(persistedReducer, enhancer);
 // Middleware: Redux Persist Persister
 let persistor = persistStore(store);
-// Exports
 export { store, persistor };

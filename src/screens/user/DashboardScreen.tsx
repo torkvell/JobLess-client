@@ -5,12 +5,15 @@ import Header from '../../components/Header';
 import Paragraph from '../../components/Paragraph';
 import Button from '../../components/Button';
 import { Navigation } from '../../types';
+import { logOut } from '../../store/user/actions.js';
+import { connect } from 'react-redux';
 
 type Props = {
   navigation: Navigation;
+  logOut: () => void;
 };
 
-const Dashboard = ({ navigation }: Props) => (
+const DashboardScreen = ({ navigation, logOut }: Props) => (
   <Background>
     <Logo />
     <Header>Let’s start</Header>
@@ -18,10 +21,10 @@ const Dashboard = ({ navigation }: Props) => (
       Your amazing app starts here. Open you favourite code editor and start
       editing this project.
     </Paragraph>
-    <Button mode="outlined" onPress={() => navigation.navigate('HomeScreen')}>
+    <Button mode="outlined" onPress={logOut}>
       Logout
     </Button>
   </Background>
 );
 
-export default memo(Dashboard);
+export default memo(connect(null, { logOut })(DashboardScreen));

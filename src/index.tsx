@@ -1,26 +1,18 @@
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
+import React from 'react';
+import { connect } from 'react-redux';
+import SignedIn from './routes/signedIn';
+import SignedOut from './routes/signedOut';
 
-import {
-  HomeScreen,
-  LoginScreen,
-  RegisterScreen,
-  ForgotPasswordScreen,
-  Dashboard,
-} from './screens/welcome/index';
-
-const Router = createStackNavigator(
-  {
-    HomeScreen,
-    LoginScreen,
-    RegisterScreen,
-    ForgotPasswordScreen,
-    Dashboard,
-  },
-  {
-    initialRouteName: 'HomeScreen',
-    headerMode: 'none',
+function index(props) {
+  if (props.user.token) {
+    return <SignedIn />;
+  } else {
+    return <SignedOut />;
   }
-);
+}
 
-export default createAppContainer(Router);
+const mapStateToProps = state => ({
+  user: state.user,
+});
+
+export default connect(mapStateToProps)(index);
