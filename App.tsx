@@ -2,23 +2,33 @@ import React from 'react';
 import { Provider as PaperProvider } from 'react-native-paper';
 import App from './src';
 import { theme } from './src/core/theme';
-// Redux store with redux persist
+// Redux store with redux persist(Async storage) --> uncomment to use
 // import { store, persistor } from './src/store';
 // import { PersistGate } from 'redux-persist/integration/react';
 // import { Provider } from 'react-redux';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
 import { Platform } from 'react-native';
 import IP from './env.js';
+import { InMemoryCache } from 'apollo-cache-inmemory';
 
-// const client = new ApolloClient({
-//   uri: 'http://localhost:4000/graphql',
-// });
+const data = {
+  id: null,
+  name: null,
+  email: null,
+  country: null,
+  jobless: null,
+  token: null,
+};
+
+const cache = new InMemoryCache();
 
 const client = new ApolloClient({
-  uri: `http://${Platform.OS === 'ios' ? 'localhost' : { IP }}:4000/graphql`,
+  uri: `http://${Platform.OS === 'ios' ? 'localhost' : IP}:4000/graphql`,
+  cache,
 });
+
+cache.writeData({ data });
 
 const Main = () => (
   // <Provider store={store}>
