@@ -11,7 +11,7 @@ import { emailValidator, passwordValidator } from '../../core/utils';
 import { Navigation } from '../../types';
 import { Mutation } from 'react-apollo';
 import { connect } from 'react-redux';
-import { loginThunk } from '../../store/user/actions.js';
+import { loginThunk } from '../../store/user/actions';
 import gql from 'graphql-tag';
 
 const LOGIN_USER = gql`
@@ -50,7 +50,7 @@ const LoginScreen = ({ navigation, loginThunk }: Props) => {
 
   return (
     <Background>
-      <BackButton goBack={() => navigation.navigate('HomeScreen')} />
+      <BackButton goBack={() => navigation.navigate('WelcomeScreen')} />
       <Logo />
       <Header>Welcome back.</Header>
       <TextInput
@@ -99,7 +99,7 @@ const LoginScreen = ({ navigation, loginThunk }: Props) => {
                   }).then(response => {
                     if (response.data) {
                       loginThunk(response.data);
-                      navigation.navigate('Dashboard');
+                      //there is no need to navigate the user. The navigation container will change to signedIn from redux props
                     }
                   });
                 }
