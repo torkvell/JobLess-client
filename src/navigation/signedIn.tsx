@@ -9,10 +9,11 @@ import {
 } from '../screens/user';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { theme } from '../core/theme';
+import { connect } from 'react-redux';
 
 const Tab = createMaterialBottomTabNavigator();
 
-function SignedInApp() {
+function SignedInApp(props) {
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -20,34 +21,37 @@ function SignedInApp() {
         inactiveColor="#f0edf0"
         barStyle={{ backgroundColor: theme.colors.primary }}
       >
-        <Tab.Screen
-          name="Jobs"
-          component={JobScreen}
-          options={{
-            tabBarLabel: 'Jobs',
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons
-                name="briefcase"
-                color={color}
-                size={26}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="My Jobs"
-          component={MyJobScreen}
-          options={{
-            tabBarLabel: 'My Jobs',
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons
-                name="briefcase-account"
-                color={color}
-                size={26}
-              />
-            ),
-          }}
-        />
+        {props.user.jobless === 'true' ? (
+          <Tab.Screen
+            name="Jobs"
+            component={JobScreen}
+            options={{
+              tabBarLabel: 'Jobs',
+              tabBarIcon: ({ color }) => (
+                <MaterialCommunityIcons
+                  name="briefcase"
+                  color={color}
+                  size={26}
+                />
+              ),
+            }}
+          />
+        ) : (
+          <Tab.Screen
+            name="My Jobs"
+            component={MyJobScreen}
+            options={{
+              tabBarLabel: 'My Jobs',
+              tabBarIcon: ({ color }) => (
+                <MaterialCommunityIcons
+                  name="briefcase"
+                  color={color}
+                  size={26}
+                />
+              ),
+            }}
+          />
+        )}
         <Tab.Screen
           name="Chat"
           component={ChatScreen}
@@ -77,4 +81,8 @@ function SignedInApp() {
   );
 }
 
-export default SignedInApp;
+const mapStateToProps = state => ({
+  user: state.user,
+});
+
+export default connect(mapStateToProps)(SignedInApp);
