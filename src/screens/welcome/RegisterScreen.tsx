@@ -91,7 +91,7 @@ const RegisterScreen = ({ navigation }: Props) => {
         }}
       >
         <Picker.Item label="I am jobless" value="true" />
-        <Picker.Item label="I am a job provider" value="false" />
+        <Picker.Item label="I want to post jobs" value="false" />
       </Picker>
     );
 

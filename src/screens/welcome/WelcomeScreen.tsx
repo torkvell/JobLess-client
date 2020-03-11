@@ -15,7 +15,7 @@ const WelcomeScreen = ({ navigation }: Props) => (
     <Logo />
     <Header>Welcome to JobLess</Header>
 
-    <Paragraph>The easiest way for jobless people to find local work</Paragraph>
+    <Paragraph>The easiest way for jobless people to find work</Paragraph>
     <Button mode="contained" onPress={() => navigation.navigate('LoginScreen')}>
       Login
     </Button>
