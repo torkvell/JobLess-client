@@ -97,7 +97,7 @@ const RegisterScreen = ({ navigation }: Props) => {
 
   return (
     <Background>
-      <BackButton goBack={() => navigation.navigate('HomeScreen')} />
+      <BackButton goBack={() => navigation.navigate('WelcomeScreen')} />
       <Logo />
       <Header>Create Account</Header>
       <TextInput
