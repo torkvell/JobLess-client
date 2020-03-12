@@ -47,16 +47,20 @@ const ADD_JOB_MUTATION = gql`
     $city: String!
     $postalCode: String!
     $address: String!
+    $userId: String!
+    $jobCategoryId: String!
   ) {
     addJob(
       title: $title
       description: $description
       price: $price
-      images: $files
+      images: $images
       country: $country
       city: $city
       postalCode: $postalCode
       address: $address
+      userId: $userId
+      jobCategoryId: $jobCategoryId
     )
   }
 `;
@@ -96,10 +100,10 @@ const MyJobScreen = ({ navigation, user }: Props) => {
       setCity({ ...city, error: cityError });
     }
     if (postalCodeError) {
-      setPostalCode({ ...city, error: postalCodeError });
+      setPostalCode({ ...postalCode, error: postalCodeError });
     }
     if (addressError) {
-      setAddress({ ...city, error: addressError });
+      setAddress({ ...address, error: addressError });
     }
     if (
       !addressError &&
@@ -116,15 +120,17 @@ const MyJobScreen = ({ navigation, user }: Props) => {
   const addJob = () => {
     const jobTitle = title.value;
     const jobDescription = description.value;
-    const jobPrice = price.value;
+    const jobPrice = parseInt(price.value);
     const jobImages = images.uri;
     const jobCountry = user.country;
     const jobCity = city.value;
     const jobPostalCode = postalCode.value;
     const jobAddress = address.value;
+    const userId = 'uID1wwc2324fcr2';
+    const jobCategoryId = 'jobCatwdfwfd32f24f4f4f4';
 
     console.log(
-      `ready to upload job?: `,
+      `data sent to server: `,
       jobTitle,
       jobDescription,
       jobPrice,
@@ -132,21 +138,25 @@ const MyJobScreen = ({ navigation, user }: Props) => {
       jobCountry,
       jobCity,
       jobPostalCode,
-      jobAddress
+      jobAddress,
+      userId,
+      jobCategoryId
     );
 
-    // uploadJob({
-    //   variables: {
-    //     jobTitle,
-    //     jobDescription,
-    //     jobPrice,
-    //     jobImages,
-    //     jobCountry,
-    //     jobCity,
-    //     jobPostalCode,
-    //     jobAddress,
-    //   },
-    // });
+    uploadJob({
+      variables: {
+        jobTitle,
+        jobDescription,
+        jobPrice,
+        jobImages,
+        jobCountry,
+        jobCity,
+        jobPostalCode,
+        jobAddress,
+        userId,
+        jobCategoryId,
+      },
+    });
   };
 
   const showAlert = () => {
