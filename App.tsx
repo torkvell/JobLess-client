@@ -13,34 +13,16 @@ import IP from './env.js';
 import { createUploadLink } from 'apollo-upload-client';
 
 const cache = new InMemoryCache();
-//to handle file uploads in requests
+
 const uploadLink = createUploadLink({
   uri: `http://${Platform.OS === 'ios' ? 'localhost' : IP}:4000/graphql`,
 });
-// const httpLink = new HttpLink({
-//   uri: `http://${Platform.OS === 'ios' ? 'localhost' : IP}:4000/graphql`,
-// });
 
 // apollo client setup
 const client = new ApolloClient({
   cache,
   link: uploadLink,
 });
-
-// const apolloCache = new InMemoryCache()
-
-// const uploadLink = createUploadLink({
-//   uri: `http://${Platform.OS === 'ios' ? 'localhost' : IP}:4000/graphql`,
-//   headers: {
-//     "keep-alive": "true"
-//   }
-// })
-
-// const client = new ApolloClient({
-//   cache: apolloCache,
-//   link: uploadLink,
-// }
-// );
 
 const Main = () => (
   <Provider store={store}>
