@@ -29,12 +29,40 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { theme } from '../../core/theme';
+import gql from 'graphql-tag';
+import { useMutation } from '@apollo/react-hooks';
 
 type Props = {
   navigation: Navigation;
+  user: { country: String };
 };
 
-const MyJobScreen = ({ navigation }: Props) => {
+const ADD_JOB_MUTATION = gql`
+  mutation(
+    $title: String!
+    $description: String!
+    $price: Number!
+    $images: [Upload!]!
+    $country: String!
+    $city: String!
+    $postalCode: String!
+    $address: String!
+  ) {
+    addJob(
+      title: $title
+      description: $description
+      price: $price
+      images: $files
+      country: $country
+      city: $city
+      postalCode: $postalCode
+      address: $address
+    )
+  }
+`;
+
+const MyJobScreen = ({ navigation, user }: Props) => {
+  const [uploadJob] = useMutation(ADD_JOB_MUTATION);
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState({ value: '', error: '' });
   const [description, setDescription] = useState({ value: '', error: '' });
@@ -81,16 +109,44 @@ const MyJobScreen = ({ navigation }: Props) => {
       !descriptionError &&
       !titleError
     ) {
-      console.log(
-        `send data to apollo mutation hook: `,
-        title.value,
-        description.value,
-        price.value,
-        city.value,
-        postalCode.value,
-        address.value
-      );
+      addJob();
     }
+  };
+
+  const addJob = () => {
+    const jobTitle = title.value;
+    const jobDescription = description.value;
+    const jobPrice = price.value;
+    const jobImages = images.uri;
+    const jobCountry = user.country;
+    const jobCity = city.value;
+    const jobPostalCode = postalCode.value;
+    const jobAddress = address.value;
+
+    console.log(
+      `ready to upload job?: `,
+      jobTitle,
+      jobDescription,
+      jobPrice,
+      jobImages,
+      jobCountry,
+      jobCity,
+      jobPostalCode,
+      jobAddress
+    );
+
+    // uploadJob({
+    //   variables: {
+    //     jobTitle,
+    //     jobDescription,
+    //     jobPrice,
+    //     jobImages,
+    //     jobCountry,
+    //     jobCity,
+    //     jobPostalCode,
+    //     jobAddress,
+    //   },
+    // });
   };
 
   const showAlert = () => {
@@ -195,7 +251,7 @@ const MyJobScreen = ({ navigation }: Props) => {
                 })}
             </View>
             {images.uri.length >= 1 && (
-              <Text style={styles.text}>Press an image to remove it </Text>
+              <Text style={styles.text}>Press image to remove it </Text>
             )}
             <TextInput
               //TODO: Render list of predefined cities based on country user belongs to
@@ -269,4 +325,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(connect(null)(MyJobScreen));
+const mapStateToProps = state => ({
+  user: state.user,
+});
+
+export default memo(connect(mapStateToProps)(MyJobScreen));

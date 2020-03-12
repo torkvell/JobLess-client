@@ -10,9 +10,12 @@ import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { Platform } from 'react-native';
 import IP from './env.js';
+import { createUploadLink } from 'apollo-upload-client';
 
 const client = new ApolloClient({
-  uri: `http://${Platform.OS === 'ios' ? 'localhost' : IP}:4000/graphql`,
+  uri: createUploadLink(
+    `http://${Platform.OS === 'ios' ? 'localhost' : IP}:4000/graphql`
+  ),
 });
 
 const Main = () => (
