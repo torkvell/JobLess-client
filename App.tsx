@@ -6,13 +6,22 @@ import { theme } from './src/core/theme';
 import { store, persistor } from './src/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
-import ApolloClient from 'apollo-boost';
+import { ApolloClient, HttpLink, InMemoryCache } from 'apollo-client-preset';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { Platform } from 'react-native';
 import IP from './env.js';
+import { createUploadLink } from 'apollo-upload-client';
 
-const client = new ApolloClient({
+const cache = new InMemoryCache();
+
+const uploadLink = createUploadLink({
   uri: `http://${Platform.OS === 'ios' ? 'localhost' : IP}:4000/graphql`,
+});
+
+// apollo client setup
+const client = new ApolloClient({
+  cache,
+  link: uploadLink,
 });
 
 const Main = () => (
