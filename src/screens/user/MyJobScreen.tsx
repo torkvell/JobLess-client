@@ -38,10 +38,10 @@ type Props = {
 };
 
 const ADD_JOB_MUTATION = gql`
-  mutation(
+  mutation AddJob(
     $title: String!
     $description: String!
-    $price: Number!
+    $price: Int!
     $images: [Upload!]!
     $country: String!
     $city: String!
@@ -61,7 +61,11 @@ const ADD_JOB_MUTATION = gql`
       address: $address
       userId: $userId
       jobCategoryId: $jobCategoryId
-    )
+    ) {
+      id
+      title
+      description
+    }
   }
 `;
 
@@ -113,50 +117,21 @@ const MyJobScreen = ({ navigation, user }: Props) => {
       !descriptionError &&
       !titleError
     ) {
-      addJob();
+      uploadJob({
+        variables: {
+          title: title.value,
+          description: description.value,
+          price: parseInt(price.value),
+          images: images.uri,
+          country: user.country,
+          city: city.value,
+          postalCode: postalCode.value,
+          address: address.value,
+          userId: 'uID1wwc2324fcr2',
+          jobCategoryId: 'jobCatwdfwfd32f24f4f4f4',
+        },
+      });
     }
-  };
-
-  const addJob = () => {
-    const jobTitle = title.value;
-    const jobDescription = description.value;
-    const jobPrice = parseInt(price.value);
-    const jobImages = images.uri;
-    const jobCountry = user.country;
-    const jobCity = city.value;
-    const jobPostalCode = postalCode.value;
-    const jobAddress = address.value;
-    const userId = 'uID1wwc2324fcr2';
-    const jobCategoryId = 'jobCatwdfwfd32f24f4f4f4';
-
-    console.log(
-      `data sent to server: `,
-      jobTitle,
-      jobDescription,
-      jobPrice,
-      jobImages,
-      jobCountry,
-      jobCity,
-      jobPostalCode,
-      jobAddress,
-      userId,
-      jobCategoryId
-    );
-
-    uploadJob({
-      variables: {
-        jobTitle,
-        jobDescription,
-        jobPrice,
-        jobImages,
-        jobCountry,
-        jobCity,
-        jobPostalCode,
-        jobAddress,
-        userId,
-        jobCategoryId,
-      },
-    });
   };
 
   const showAlert = () => {
@@ -273,6 +248,7 @@ const MyJobScreen = ({ navigation, user }: Props) => {
               errorText={city.error}
             />
             <TextInput
+              //TODO: Render list of predefined postalcodes based on city user belongs to
               label="PostalCode"
               returnKeyType="next"
               value={postalCode.value}
