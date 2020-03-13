@@ -5,17 +5,26 @@ const initialState = {
   country: null,
   jobless: null,
   token: null,
+  jobs: null,
 };
 
 export default (state = initialState, action = {}) => {
   switch (action.type) {
-    case 'ERROR':
-      console.log(`error reducer`);
-      return { ...state, error: action.payload };
+    // errors are displayed directly in component from apollo mutations/query
+    // case 'ERROR':
+    //   return { ...state, error: action.payload };
     case 'LOGOUT_SUCCESS':
       return { ...initialState };
     case 'LOGIN_SUCCESS':
-      const { id, name, email, country, jobless, token } = action.payload.login;
+      const {
+        id,
+        name,
+        email,
+        country,
+        jobless,
+        token,
+        jobs,
+      } = action.payload.login;
       return {
         ...state,
         id,
@@ -24,7 +33,11 @@ export default (state = initialState, action = {}) => {
         country,
         jobless,
         token,
+        jobs,
       };
+    case 'JOB_PUBLISHED':
+      console.log(`inside reducer for job published`, action.payload);
+      return { ...state, jobs: [action.payload] };
     default:
       return state;
   }

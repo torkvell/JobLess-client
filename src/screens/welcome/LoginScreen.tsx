@@ -85,7 +85,11 @@ const LoginScreen = ({ navigation, loginThunk }: Props) => {
         {(login, { data, error }) => (
           <View style={styles.submitContainer}>
             {error && (
-              <Text style={styles.error}>{error.graphQLErrors[0].message}</Text>
+              <Text style={styles.error}>
+                {error.graphQLErrors[0]
+                  ? error.graphQLErrors[0].message
+                  : 'Error'}
+              </Text>
             )}
             <Button
               mode="contained"
