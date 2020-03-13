@@ -42,7 +42,7 @@ const ADD_JOB_MUTATION = gql`
     $title: String!
     $description: String!
     $price: Int!
-    $images: [Upload!]!
+    $images: Upload!
     $country: String!
     $city: String!
     $postalCode: String!
@@ -75,7 +75,7 @@ const MyJobScreen = ({ navigation, user }: Props) => {
   const [title, setTitle] = useState({ value: '', error: '' });
   const [description, setDescription] = useState({ value: '', error: '' });
   const [price, setPrice] = useState({ value: null, error: '' });
-  const [images, setImage] = useState({ uri: [], error: '' });
+  const [images, setImage] = useState({ uri: null, error: '' });
   const [city, setCity] = useState({ value: null, error: '' });
   const [postalCode, setPostalCode] = useState({ value: null, error: '' });
   const [address, setAddress] = useState({ value: null, error: '' });
@@ -117,6 +117,19 @@ const MyJobScreen = ({ navigation, user }: Props) => {
       !descriptionError &&
       !titleError
     ) {
+      console.log(
+        `Request to graphQL API---------> 
+        \n Title: ${title.value} 
+        \n Description: ${description.value} 
+        \n Price: ${price.value} 
+        \n Images: ${images.uri} 
+        \n Country: ${user.country} 
+        \n City: ${city.value} 
+        \n PostalCode: ${postalCode.value} 
+        \n Address: ${address.value} 
+        \n userId: ${'uID1wwc2324fcr2'} 
+        \n jobCategoryId: ${'jobCatwdfwfd32f24f4f4f4'}`
+      );
       uploadJob({
         variables: {
           title: title.value,
@@ -168,7 +181,7 @@ const MyJobScreen = ({ navigation, user }: Props) => {
       quality: 1,
     });
     if (!result.cancelled) {
-      setImage({ ...images, uri: [...images.uri, result.uri] });
+      setImage({ ...images, uri: result.uri });
     }
   };
 
@@ -219,7 +232,7 @@ const MyJobScreen = ({ navigation, user }: Props) => {
             <Button icon="camera" mode="contained" onPress={getImagePermission}>
               ADD IMAGE
             </Button>
-            <View style={styles.imageContainer}>
+            {/* <View style={styles.imageContainer}>
               {images.uri.length >= 1 &&
                 images.uri.map(imageURI => {
                   return (
@@ -237,7 +250,7 @@ const MyJobScreen = ({ navigation, user }: Props) => {
             </View>
             {images.uri.length >= 1 && (
               <Text style={styles.text}>Press image to remove it </Text>
-            )}
+            )} */}
             <TextInput
               //TODO: Render list of predefined cities based on country user belongs to
               label="City"
