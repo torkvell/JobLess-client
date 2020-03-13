@@ -2,7 +2,6 @@ import React from 'react';
 import { Provider as PaperProvider } from 'react-native-paper';
 import App from './src';
 import { theme } from './src/core/theme';
-// Redux store with redux persist(Async storage) --> uncomment to use
 import { store, persistor } from './src/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
