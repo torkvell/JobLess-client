@@ -30,19 +30,21 @@ import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { theme } from '../../core/theme';
 import gql from 'graphql-tag';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import { jobToGlobalState } from '../../store/user/actions';
 
 type Props = {
   navigation: Navigation;
-  user: { country: String };
+  user: { country: String; id: String };
+  jobToGlobalState: (job: Object) => void;
 };
 
+//TODO: ADD type for images $images: [Upload!]! || single file not required: Upload
 const ADD_JOB_MUTATION = gql`
   mutation AddJob(
     $title: String!
     $description: String!
     $price: Int!
-    $images: Upload!
     $country: String!
     $city: String!
     $postalCode: String!
@@ -54,7 +56,6 @@ const ADD_JOB_MUTATION = gql`
       title: $title
       description: $description
       price: $price
-      images: $images
       country: $country
       city: $city
       postalCode: $postalCode
@@ -65,11 +66,35 @@ const ADD_JOB_MUTATION = gql`
       id
       title
       description
+      price
+      city
+      postalCode
+      address
+      userId
+      jobCategoryId
     }
   }
 `;
 
-const MyJobScreen = ({ navigation, user }: Props) => {
+// const GET_USER_JOBS = gql`
+//   query UserJobs($userId: String) {
+//     userJobs(userId: $userId) {
+//       id
+//       title
+//       description
+//       price
+//       city
+//       postalCode
+//       address
+//       jobCategoryId
+//     }
+//   }
+// `;
+
+const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
+  // const { loading, error, data } = useQuery(GET_USER_JOBS, {
+  //   variables: user.id,
+  // });
   const [uploadJob] = useMutation(ADD_JOB_MUTATION);
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState({ value: '', error: '' });
@@ -122,7 +147,6 @@ const MyJobScreen = ({ navigation, user }: Props) => {
         \n Title: ${title.value} 
         \n Description: ${description.value} 
         \n Price: ${price.value} 
-        \n Images: ${images.uri} 
         \n Country: ${user.country} 
         \n City: ${city.value} 
         \n PostalCode: ${postalCode.value} 
@@ -135,14 +159,17 @@ const MyJobScreen = ({ navigation, user }: Props) => {
           title: title.value,
           description: description.value,
           price: parseInt(price.value),
-          images: images.uri,
+          // images: images.uri,
           country: user.country,
           city: city.value,
           postalCode: postalCode.value,
           address: address.value,
-          userId: 'uID1wwc2324fcr2',
+          userId: user.id,
           jobCategoryId: 'jobCatwdfwfd32f24f4f4f4',
         },
+      }).then(res => {
+        const job = res.data.addJob;
+        jobToGlobalState(job);
       });
     }
   };
@@ -182,6 +209,7 @@ const MyJobScreen = ({ navigation, user }: Props) => {
     });
     if (!result.cancelled) {
       setImage({ ...images, uri: result.uri });
+      //setImage({ ...images, uri: [...images.uri, result.uri] });
     }
   };
 
@@ -189,6 +217,19 @@ const MyJobScreen = ({ navigation, user }: Props) => {
     const newImages = images.uri.filter(uri => uri !== imageURI);
     setImage({ uri: newImages, error: '' });
   };
+
+  // if (loading)
+  //   return (
+  //     <Container>
+  //       <Text>Loading...</Text>
+  //     </Container>
+  //   );
+  // if (error)
+  //   return (
+  //     <Container>
+  //       <Text>Error! ${error.message}</Text>
+  //     </Container>
+  //   );
 
   return (
     <Background>
@@ -286,6 +327,7 @@ const MyJobScreen = ({ navigation, user }: Props) => {
       <Button icon="plus" mode="contained" onPress={() => setModalOpen(true)}>
         POST JOB
       </Button>
+      {/* {data && console.log('get user jobs: ', data)} */}
     </Background>
   );
 };
@@ -328,4 +370,6 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-export default memo(connect(mapStateToProps)(MyJobScreen));
+export default memo(
+  connect(mapStateToProps, { jobToGlobalState })(MyJobScreen)
+);
