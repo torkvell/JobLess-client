@@ -14,6 +14,7 @@ import {
   Image,
   TouchableHighlight,
   ScrollView,
+  FlatList,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import TextInput from '../../components/TextInput';
@@ -32,10 +33,11 @@ import { theme } from '../../core/theme';
 import gql from 'graphql-tag';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { jobToGlobalState } from '../../store/user/actions';
+import { Avatar, Card, Title, Paragraph } from 'react-native-paper';
 
 type Props = {
   navigation: Navigation;
-  user: { country: String; id: String };
+  user: { country: String; id: String; jobs: [] };
   jobToGlobalState: (job: Object) => void;
 };
 
@@ -76,25 +78,7 @@ const ADD_JOB_MUTATION = gql`
   }
 `;
 
-// const GET_USER_JOBS = gql`
-//   query UserJobs($userId: String) {
-//     userJobs(userId: $userId) {
-//       id
-//       title
-//       description
-//       price
-//       city
-//       postalCode
-//       address
-//       jobCategoryId
-//     }
-//   }
-// `;
-
 const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
-  // const { loading, error, data } = useQuery(GET_USER_JOBS, {
-  //   variables: user.id,
-  // });
   const [uploadJob] = useMutation(ADD_JOB_MUTATION);
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState({ value: '', error: '' });
@@ -218,18 +202,34 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
     setImage({ uri: newImages, error: '' });
   };
 
-  // if (loading)
-  //   return (
-  //     <Container>
-  //       <Text>Loading...</Text>
-  //     </Container>
-  //   );
-  // if (error)
-  //   return (
-  //     <Container>
-  //       <Text>Error! ${error.message}</Text>
-  //     </Container>
-  //   );
+  const userJobs =
+    user.jobs.length > 0 ? (
+      user.jobs.map(job => {
+        return (
+          <Card
+            key={job.id}
+            style={{ height: 380, maxWidth: 340, marginBottom: 50 }}
+          >
+            <Card.Content>
+              <Title>{job.title}</Title>
+              <Paragraph>{job.description}</Paragraph>
+              <Paragraph>{job.price} EUR</Paragraph>
+            </Card.Content>
+            <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+            <View style={styles.actionButtonContainer}>
+              <Card.Actions>
+                <Button style={{ width: 100 }}>Edit</Button>
+              </Card.Actions>
+              <Card.Actions>
+                <Button>Delete</Button>
+              </Card.Actions>
+            </View>
+          </Card>
+        );
+      })
+    ) : (
+      <View></View>
+    );
 
   return (
     <Background>
@@ -327,7 +327,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
       <Button icon="plus" mode="contained" onPress={() => setModalOpen(true)}>
         POST JOB
       </Button>
-      {/* {data && console.log('get user jobs: ', data)} */}
+      <ScrollView showsVerticalScrollIndicator={false}>{userJobs}</ScrollView>
     </Background>
   );
 };
@@ -363,6 +363,9 @@ const styles = StyleSheet.create({
   desription: {
     height: 100,
     backgroundColor: '#ffffff',
+  },
+  actionButtonContainer: {
+    flexDirection: 'row',
   },
 });
 

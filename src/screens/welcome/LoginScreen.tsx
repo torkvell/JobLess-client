@@ -23,6 +23,17 @@ const LOGIN_USER = gql`
       country
       jobless
       token
+      jobs {
+        id
+        title
+        description
+        price
+        city
+        postalCode
+        address
+        userId
+        jobCategoryId
+      }
     }
   }
 `;
