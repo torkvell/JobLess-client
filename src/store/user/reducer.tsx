@@ -36,8 +36,7 @@ export default (state = initialState, action = {}) => {
         jobs,
       };
     case 'JOB_PUBLISHED':
-      console.log(`inside reducer for job published`, action.payload);
-      return { ...state, jobs: [action.payload] };
+      return { ...state, jobs: [...state.jobs, action.payload] };
     default:
       return state;
   }
