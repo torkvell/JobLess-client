@@ -7,14 +7,10 @@ import { connect } from 'react-redux';
 import {
   Modal,
   View,
-  Text,
   StyleSheet,
   Alert,
   Linking,
-  Image,
-  TouchableHighlight,
   ScrollView,
-  FlatList,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import TextInput from '../../components/TextInput';
@@ -138,6 +134,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
         \n userId: ${'uID1wwc2324fcr2'} 
         \n jobCategoryId: ${'jobCatwdfwfd32f24f4f4f4'}`
       );
+      //TODO: Add user token to request and authorize in back-end
       uploadJob({
         variables: {
           title: title.value,
@@ -206,10 +203,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
     user.jobs.length > 0 ? (
       user.jobs.map(job => {
         return (
-          <Card
-            key={job.id}
-            style={{ height: 380, maxWidth: 340, marginBottom: 50 }}
-          >
+          <Card key={job.id} style={styles.jobCard}>
             <Card.Content>
               <Title>{job.title}</Title>
               <Paragraph>{job.description}</Paragraph>
@@ -333,6 +327,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
 };
 
 const styles = StyleSheet.create({
+  jobCard: { height: 380, maxWidth: 340, marginBottom: 50 },
   modalToggle: {
     justifyContent: 'center',
     alignItems: 'center',
