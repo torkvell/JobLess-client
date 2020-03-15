@@ -27,13 +27,13 @@ import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { theme } from '../../core/theme';
 import gql from 'graphql-tag';
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import { jobToGlobalState } from '../../store/user/actions';
 import { Avatar, Card, Title, Paragraph } from 'react-native-paper';
 
 type Props = {
   navigation: Navigation;
-  user: { country: String; id: String; jobs: [] };
+  user: { country: String; id: String; jobs: []; token: String };
   jobToGlobalState: (job: Object) => void;
 };
 
@@ -49,6 +49,7 @@ const ADD_JOB_MUTATION = gql`
     $address: String!
     $userId: String!
     $jobCategoryId: String!
+    $token: String!
   ) {
     addJob(
       title: $title
@@ -60,6 +61,7 @@ const ADD_JOB_MUTATION = gql`
       address: $address
       userId: $userId
       jobCategoryId: $jobCategoryId
+      token: $token
     ) {
       id
       title
@@ -134,7 +136,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
         \n userId: ${'uID1wwc2324fcr2'} 
         \n jobCategoryId: ${'jobCatwdfwfd32f24f4f4f4'}`
       );
-      //TODO: Add user token to request and authorize in back-end
+      //TODO: Add functionality to upload images for job
       uploadJob({
         variables: {
           title: title.value,
@@ -146,11 +148,11 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
           postalCode: postalCode.value,
           address: address.value,
           userId: user.id,
-          jobCategoryId: 'jobCatwdfwfd32f24f4f4f4',
+          jobCategoryId: 'jobCatTestingID_32f24f4f4f4',
+          token: user.token,
         },
       }).then(res => {
-        const job = res.data.addJob;
-        jobToGlobalState(job);
+        jobToGlobalState(res.data.addJob);
       });
     }
   };
