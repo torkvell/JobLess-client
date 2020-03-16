@@ -203,26 +203,34 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
 
   const userJobs =
     user.jobs.length > 0 ? (
-      user.jobs.map(job => {
-        return (
-          <Card key={job.id} style={styles.jobCard}>
-            <Card.Content>
-              <Title>{job.title}</Title>
-              <Paragraph>{job.description}</Paragraph>
-              <Paragraph>{job.price} EUR</Paragraph>
-            </Card.Content>
-            <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
-            <View style={styles.actionButtonContainer}>
-              <Card.Actions>
-                <Button style={{ width: 100 }}>Edit</Button>
-              </Card.Actions>
-              <Card.Actions>
-                <Button>Delete</Button>
-              </Card.Actions>
-            </View>
-          </Card>
-        );
-      })
+      user.jobs.map(
+        (job: {
+          id: String;
+          title: String;
+          description: String;
+          price: Number;
+        }) => {
+          console.log(`job object:`, job);
+          return (
+            <Card key={job.id} style={styles.jobCard}>
+              <Card.Content>
+                <Title>{job.title}</Title>
+                <Paragraph>{job.description}</Paragraph>
+                <Paragraph>{job.price} EUR</Paragraph>
+              </Card.Content>
+              <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+              <View style={styles.actionButtonContainer}>
+                <Card.Actions>
+                  <Button style={{ width: 100 }}>Edit</Button>
+                </Card.Actions>
+                <Card.Actions>
+                  <Button>Delete</Button>
+                </Card.Actions>
+              </View>
+            </Card>
+          );
+        }
+      )
     ) : (
       <View></View>
     );
