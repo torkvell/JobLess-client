@@ -7,7 +7,7 @@ import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 import BackButton from '../../components/BackButton';
 import { theme } from '../../core/theme';
-import { emailValidator, passwordValidator } from '../../core/utils';
+import { validate } from '../../core/utils';
 import { Navigation } from '../../types';
 import { Mutation } from 'react-apollo';
 import { connect } from 'react-redux';
@@ -24,8 +24,8 @@ const LoginScreen = ({ navigation, loginThunk }: Props) => {
   const [password, setPassword] = useState({ value: '', error: '' });
 
   const validateInput = () => {
-    const emailError = emailValidator(email.value);
-    const passwordError = passwordValidator(password.value);
+    const emailError = validate.email(email.value);
+    const passwordError = validate.password(password.value);
     if (emailError || passwordError) {
       setEmail({ ...email, error: emailError });
       setPassword({ ...password, error: passwordError });

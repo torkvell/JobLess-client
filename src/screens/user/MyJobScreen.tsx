@@ -18,14 +18,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import TextInput from '../../components/TextInput';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { useMutation } from '@apollo/react-hooks';
-import {
-  titleValidator,
-  descriptionValidator,
-  priceValidator,
-  cityValidator,
-  postalCodeValidator,
-  addressValidator,
-} from '../../core/utils';
+import { validate } from '../../core/utils';
 import { Navigation } from '../../types';
 import { theme } from '../../core/theme';
 import { jobToGlobalState } from '../../store/user/actions';
@@ -40,70 +33,46 @@ type Props = {
 const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
   const [uploadJob] = useMutation(ADD_JOB_MUTATION);
   const [modalOpen, setModalOpen] = useState(false);
-  const [title, setTitle] = useState({ value: '', error: '' });
-  const [description, setDescription] = useState({ value: '', error: '' });
-  const [price, setPrice] = useState({ value: null, error: '' });
+  const [title, setTitle] = useState({ name: 'title', value: null, error: '' });
+  const [description, setDescription] = useState({
+    name: 'description',
+    value: null,
+    error: '',
+  });
+  const [price, setPrice] = useState({ name: 'price', value: null, error: '' });
   const [images, setImage] = useState({ uri: null, error: '' });
-  const [city, setCity] = useState({ value: null, error: '' });
-  const [postalCode, setPostalCode] = useState({ value: null, error: '' });
-  const [address, setAddress] = useState({ value: null, error: '' });
-  const [hasCameraPermission, setCameraPermission] = useState({
+  const [city, setCity] = useState({ name: 'city', value: null, error: '' });
+  const [postalCode, setPostalCode] = useState({
+    name: 'postalCode',
+    value: null,
+    error: '',
+  });
+  const [address, setAddress] = useState({
+    name: 'address',
     value: null,
     error: '',
   });
 
   const validateInput = () => {
-    const titleError = titleValidator(title.value);
-    const descriptionError = descriptionValidator(description.value);
-    const priceError = priceValidator(price.value);
-    const cityError = cityValidator(city.value);
-    const postalCodeError = postalCodeValidator(postalCode.value);
-    const addressError = addressValidator(address.value);
-    if (titleError) {
-      setTitle({ ...title, error: titleError });
-    }
-    if (descriptionError) {
-      setDescription({ ...description, error: descriptionError });
-    }
-    if (priceError) {
-      setPrice({ ...price, error: priceError });
-    }
-    if (cityError) {
-      setCity({ ...city, error: cityError });
-    }
-    if (postalCodeError) {
-      setPostalCode({ ...postalCode, error: postalCodeError });
-    }
-    if (addressError) {
-      setAddress({ ...address, error: addressError });
-    }
-    if (
-      !addressError &&
-      !postalCodeError &&
-      !cityError &&
-      !priceError &&
-      !descriptionError &&
-      !titleError
-    ) {
-      //TODO: Add functionality to upload images for job
-      uploadJob({
-        variables: {
-          title: title.value,
-          description: description.value,
-          price: parseInt(price.value),
-          // images: images.uri,
-          country: user.country,
-          city: city.value,
-          postalCode: postalCode.value,
-          address: address.value,
-          userId: user.id,
-          jobCategoryId: 'jobCatTestingID_32f24f4f4f4',
-          token: user.token,
-        },
-      }).then(res => {
-        if (res.data.addJob.id) return jobToGlobalState(res.data.addJob);
-      });
-    }
+    let errorState = false;
+    const formData = [
+      [title, setTitle],
+      [description, setDescription],
+      [price, setPrice],
+      [city, setCity],
+      [postalCode, setPostalCode],
+      [address, setAddress],
+    ];
+    formData.forEach(field => {
+      console.log(`field`, field);
+      const error = validate[field[0].name](field[0].value);
+      // if error we call the second element of the array "field" that is the state setter
+      if (error) {
+        field[1]({ ...field[0], error });
+        errorState = true;
+      }
+    });
+    return errorState;
   };
 
   const showAlert = () => {
@@ -196,7 +165,9 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               label="Title"
               returnKeyType="next"
               value={title.value}
-              onChangeText={text => setTitle({ value: text, error: '' })}
+              onChangeText={text =>
+                setTitle({ name: 'title', value: text, error: '' })
+              }
               error={!!title.error}
               errorText={title.error}
             />
@@ -205,7 +176,9 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               label="Description"
               returnKeyType="next"
               value={description.value}
-              onChangeText={text => setDescription({ value: text, error: '' })}
+              onChangeText={text =>
+                setDescription({ name: 'description', value: text, error: '' })
+              }
               error={!!description.error}
               errorText={description.error}
               multiline={true}
@@ -214,7 +187,9 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               label="Price"
               returnKeyType="next"
               value={price.value}
-              onChangeText={text => setPrice({ value: text, error: '' })}
+              onChangeText={text =>
+                setPrice({ name: 'price', value: text, error: '' })
+              }
               error={!!price.error}
               errorText={price.error}
               keyboardType={'numeric'}
@@ -245,7 +220,9 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               label="City"
               returnKeyType="next"
               value={city.value}
-              onChangeText={text => setCity({ value: text, error: '' })}
+              onChangeText={text =>
+                setCity({ name: 'city', value: text, error: '' })
+              }
               error={!!city.error}
               errorText={city.error}
             />
@@ -253,7 +230,9 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               label="PostalCode"
               returnKeyType="next"
               value={postalCode.value}
-              onChangeText={text => setPostalCode({ value: text, error: '' })}
+              onChangeText={text =>
+                setPostalCode({ name: 'postalCode', value: text, error: '' })
+              }
               error={!!postalCode.error}
               errorText={postalCode.error}
             />
@@ -261,11 +240,39 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               label="Address"
               returnKeyType="next"
               value={address.value}
-              onChangeText={text => setAddress({ value: text, error: '' })}
+              onChangeText={text =>
+                setAddress({ name: 'address', value: text, error: '' })
+              }
               error={!!address.error}
               errorText={address.error}
             />
-            <Button mode="contained" onPress={validateInput}>
+            <Button
+              mode="contained"
+              onPress={() => {
+                if (!validateInput()) {
+                  console.log(`inside validate upload activcated`);
+                  //TODO: Add functionality to upload images for job
+                  uploadJob({
+                    variables: {
+                      title: title.value,
+                      description: description.value,
+                      price: parseInt(price.value),
+                      // images: images.uri,
+                      country: user.country,
+                      city: city.value,
+                      postalCode: postalCode.value,
+                      address: address.value,
+                      userId: user.id,
+                      jobCategoryId: 'jobCatTestingID_32f24f4f4f4',
+                      token: user.token,
+                    },
+                  }).then(res => {
+                    if (res.data.addJob.id)
+                      return jobToGlobalState(res.data.addJob);
+                  });
+                }
+              }}
+            >
               PUBLISH JOB
             </Button>
           </Container>
