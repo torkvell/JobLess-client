@@ -2,7 +2,6 @@
 
 export function loginThunk(data) {
   return function(dispatch) {
-    console.log(`data after login front end ----------->`, data);
     if (data) return dispatch(loginSuccess(data));
   };
 }
@@ -27,7 +26,7 @@ function logOutSuccess() {
 }
 
 /*--------------------SIGN UP--------------------*/
-//No dispatch needed. After sign up success user is redirected to login screen
+//No dispatch needed. After sign up success user gets redirected to login screen
 
 /*--------------------ADD JOB--------------------*/
 export function jobToGlobalState(job) {

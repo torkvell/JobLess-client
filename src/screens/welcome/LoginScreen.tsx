@@ -12,31 +12,7 @@ import { Navigation } from '../../types';
 import { Mutation } from 'react-apollo';
 import { connect } from 'react-redux';
 import { loginThunk } from '../../store/user/actions';
-import gql from 'graphql-tag';
-
-const LOGIN_USER = gql`
-  mutation LoginUser($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      id
-      name
-      email
-      country
-      jobless
-      token
-      jobs {
-        id
-        title
-        description
-        price
-        city
-        postalCode
-        address
-        userId
-        jobCategoryId
-      }
-    }
-  }
-`;
+import { LOGIN_USER } from '../../core/mutations';
 
 type Props = {
   navigation: Navigation;

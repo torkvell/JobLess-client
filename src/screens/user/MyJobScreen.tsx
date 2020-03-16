@@ -1,9 +1,4 @@
 import React, { memo, useState } from 'react';
-import Background from '../../components/Background';
-import Container from '../../components/Container';
-import Button from '../../components/Button';
-import { Navigation } from '../../types';
-import { connect } from 'react-redux';
 import {
   Modal,
   View,
@@ -12,8 +7,17 @@ import {
   Linking,
   ScrollView,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
+import Background from '../../components/Background';
+import Container from '../../components/Container';
+import Button from '../../components/Button';
+import { connect } from 'react-redux';
 import { MaterialIcons } from '@expo/vector-icons';
 import TextInput from '../../components/TextInput';
+import { Card, Title, Paragraph } from 'react-native-paper';
+import { useMutation } from '@apollo/react-hooks';
 import {
   titleValidator,
   descriptionValidator,
@@ -22,59 +26,16 @@ import {
   postalCodeValidator,
   addressValidator,
 } from '../../core/utils';
-import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
-import Constants from 'expo-constants';
+import { Navigation } from '../../types';
 import { theme } from '../../core/theme';
-import gql from 'graphql-tag';
-import { useMutation } from '@apollo/react-hooks';
 import { jobToGlobalState } from '../../store/user/actions';
-import { Avatar, Card, Title, Paragraph } from 'react-native-paper';
+import { ADD_JOB_MUTATION } from '../../core/mutations';
 
 type Props = {
   navigation: Navigation;
   user: { country: String; id: String; jobs: []; token: String };
   jobToGlobalState: (job: Object) => void;
 };
-
-//TODO: ADD type for images $images: [Upload!]! || single file not required: Upload
-const ADD_JOB_MUTATION = gql`
-  mutation AddJob(
-    $title: String!
-    $description: String!
-    $price: Int!
-    $country: String!
-    $city: String!
-    $postalCode: String!
-    $address: String!
-    $userId: String!
-    $jobCategoryId: String!
-    $token: String!
-  ) {
-    addJob(
-      title: $title
-      description: $description
-      price: $price
-      country: $country
-      city: $city
-      postalCode: $postalCode
-      address: $address
-      userId: $userId
-      jobCategoryId: $jobCategoryId
-      token: $token
-    ) {
-      id
-      title
-      description
-      price
-      city
-      postalCode
-      address
-      userId
-      jobCategoryId
-    }
-  }
-`;
 
 const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
   const [uploadJob] = useMutation(ADD_JOB_MUTATION);
@@ -124,18 +85,6 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
       !descriptionError &&
       !titleError
     ) {
-      console.log(
-        `Request to graphQL API---------> 
-        \n Title: ${title.value} 
-        \n Description: ${description.value} 
-        \n Price: ${price.value} 
-        \n Country: ${user.country} 
-        \n City: ${city.value} 
-        \n PostalCode: ${postalCode.value} 
-        \n Address: ${address.value} 
-        \n userId: ${'uID1wwc2324fcr2'} 
-        \n jobCategoryId: ${'jobCatwdfwfd32f24f4f4f4'}`
-      );
       //TODO: Add functionality to upload images for job
       uploadJob({
         variables: {
@@ -152,7 +101,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
           token: user.token,
         },
       }).then(res => {
-        jobToGlobalState(res.data.addJob);
+        if (res.data.addJob.id) return jobToGlobalState(res.data.addJob);
       });
     }
   };
@@ -173,7 +122,6 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
   };
 
   const getImagePermission = async () => {
-    //Only neccessary for ios
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== 'granted') {
@@ -192,7 +140,6 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
     });
     if (!result.cancelled) {
       setImage({ ...images, uri: result.uri });
-      //setImage({ ...images, uri: [...images.uri, result.uri] });
     }
   };
 
@@ -210,7 +157,6 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
           description: String;
           price: Number;
         }) => {
-          console.log(`job object:`, job);
           return (
             <Card key={job.id} style={styles.jobCard}>
               <Card.Content>
@@ -265,7 +211,6 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               multiline={true}
             />
             <TextInput
-              //TODO: Render currency code for the country the user belongs to
               label="Price"
               returnKeyType="next"
               value={price.value}
@@ -297,7 +242,6 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               <Text style={styles.text}>Press image to remove it </Text>
             )} */}
             <TextInput
-              //TODO: Render list of predefined cities based on country user belongs to
               label="City"
               returnKeyType="next"
               value={city.value}
@@ -306,7 +250,6 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               errorText={city.error}
             />
             <TextInput
-              //TODO: Render list of predefined postalcodes based on city user belongs to
               label="PostalCode"
               returnKeyType="next"
               value={postalCode.value}
