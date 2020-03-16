@@ -1,4 +1,5 @@
 import React, { memo, useState } from 'react';
+import { Mutation } from 'react-apollo';
 import {
   View,
   Text,
@@ -7,6 +8,7 @@ import {
   Picker,
   Platform,
 } from 'react-native';
+import CountryPicker from 'react-native-country-picker-modal';
 import Background from '../../components/Background';
 import Logo from '../../components/Logo';
 import Header from '../../components/Header';
@@ -15,37 +17,13 @@ import TextInput from '../../components/TextInput';
 import BackButton from '../../components/BackButton';
 import { theme } from '../../core/theme';
 import { Navigation } from '../../types';
-import {
-  emailValidator,
-  passwordValidator,
-  nameValidator,
-} from '../../core/utils';
-import CountryPicker from 'react-native-country-picker-modal';
-import gql from 'graphql-tag';
-import { Mutation } from 'react-apollo';
-
-const REGISTER_USER = gql`
-  mutation RegisterUser(
-    $name: String!
-    $email: String!
-    $password: String!
-    $country: String!
-    $jobless: Boolean!
-  ) {
-    addUser(
-      name: $name
-      email: $email
-      password: $password
-      country: $country
-      jobless: $jobless
-    ) {
-      name
-      email
-      country
-      jobless
-    }
-  }
-`;
+// import {
+//   emailValidator,
+//   passwordValidator,
+//   nameValidator,
+// } from '../../core/utils';
+import { validate } from '../../core/utils';
+import { REGISTER_USER } from '../../core/mutations';
 
 type Props = {
   navigation: Navigation;
@@ -65,9 +43,9 @@ const RegisterScreen = ({ navigation }: Props) => {
   };
 
   const validateInput = () => {
-    const nameError = nameValidator(name.value);
-    const emailError = emailValidator(email.value);
-    const passwordError = passwordValidator(password.value);
+    const nameError = validate.name(name.value);
+    const emailError = validate.email(email.value);
+    const passwordError = validate.password(password.value);
     if (emailError || passwordError || nameError) {
       setName({ ...name, error: nameError });
       setEmail({ ...email, error: emailError });

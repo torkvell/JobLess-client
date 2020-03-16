@@ -10,30 +10,12 @@ const initialState = {
 
 export default (state = initialState, action = {}) => {
   switch (action.type) {
-    // errors are displayed directly in component from apollo mutations/query
-    // case 'ERROR':
-    //   return { ...state, error: action.payload };
     case 'LOGOUT_SUCCESS':
       return { ...initialState };
     case 'LOGIN_SUCCESS':
-      const {
-        id,
-        name,
-        email,
-        country,
-        jobless,
-        token,
-        jobs,
-      } = action.payload.login;
       return {
         ...state,
-        id,
-        name,
-        email,
-        country,
-        jobless,
-        token,
-        jobs,
+        ...action.payload.login,
       };
     case 'JOB_PUBLISHED':
       return { ...state, jobs: [...state.jobs, action.payload] };

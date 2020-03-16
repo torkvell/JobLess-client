@@ -1,15 +1,15 @@
 import React from 'react';
 import { Provider as PaperProvider } from 'react-native-paper';
-import App from './src';
+import { ApolloClient, InMemoryCache } from 'apollo-client-preset';
+import { PersistGate } from 'redux-persist/integration/react';
+import { createUploadLink } from 'apollo-upload-client';
 import { theme } from './src/core/theme';
 import { store, persistor } from './src/store';
-import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
-import { ApolloClient, InMemoryCache } from 'apollo-client-preset';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { Platform } from 'react-native';
-import IP from './env.js';
-import { createUploadLink } from 'apollo-upload-client';
+import IP from './env';
+import App from './src';
 
 const cache = new InMemoryCache();
 

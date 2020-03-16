@@ -1,9 +1,4 @@
 import React, { memo, useState } from 'react';
-import Background from '../../components/Background';
-import Container from '../../components/Container';
-import Button from '../../components/Button';
-import { Navigation } from '../../types';
-import { connect } from 'react-redux';
 import {
   Modal,
   View,
@@ -12,24 +7,22 @@ import {
   Linking,
   ScrollView,
 } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import TextInput from '../../components/TextInput';
-import {
-  titleValidator,
-  descriptionValidator,
-  priceValidator,
-  cityValidator,
-  postalCodeValidator,
-  addressValidator,
-} from '../../core/utils';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
-import { theme } from '../../core/theme';
-import gql from 'graphql-tag';
+import Background from '../../components/Background';
+import Container from '../../components/Container';
+import Button from '../../components/Button';
+import { connect } from 'react-redux';
+import { MaterialIcons } from '@expo/vector-icons';
+import TextInput from '../../components/TextInput';
+import { Card, Title, Paragraph } from 'react-native-paper';
 import { useMutation } from '@apollo/react-hooks';
+import { validate } from '../../core/utils';
+import { Navigation } from '../../types';
+import { theme } from '../../core/theme';
 import { jobToGlobalState } from '../../store/user/actions';
-import { Avatar, Card, Title, Paragraph } from 'react-native-paper';
+import { ADD_JOB_MUTATION } from '../../core/mutations';
 
 type Props = {
   navigation: Navigation;
@@ -37,124 +30,49 @@ type Props = {
   jobToGlobalState: (job: Object) => void;
 };
 
-//TODO: ADD type for images $images: [Upload!]! || single file not required: Upload
-const ADD_JOB_MUTATION = gql`
-  mutation AddJob(
-    $title: String!
-    $description: String!
-    $price: Int!
-    $country: String!
-    $city: String!
-    $postalCode: String!
-    $address: String!
-    $userId: String!
-    $jobCategoryId: String!
-    $token: String!
-  ) {
-    addJob(
-      title: $title
-      description: $description
-      price: $price
-      country: $country
-      city: $city
-      postalCode: $postalCode
-      address: $address
-      userId: $userId
-      jobCategoryId: $jobCategoryId
-      token: $token
-    ) {
-      id
-      title
-      description
-      price
-      city
-      postalCode
-      address
-      userId
-      jobCategoryId
-    }
-  }
-`;
-
 const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
   const [uploadJob] = useMutation(ADD_JOB_MUTATION);
   const [modalOpen, setModalOpen] = useState(false);
-  const [title, setTitle] = useState({ value: '', error: '' });
-  const [description, setDescription] = useState({ value: '', error: '' });
-  const [price, setPrice] = useState({ value: null, error: '' });
+  const [title, setTitle] = useState({ name: 'title', value: null, error: '' });
+  const [description, setDescription] = useState({
+    name: 'description',
+    value: null,
+    error: '',
+  });
+  const [price, setPrice] = useState({ name: 'price', value: null, error: '' });
   const [images, setImage] = useState({ uri: null, error: '' });
-  const [city, setCity] = useState({ value: null, error: '' });
-  const [postalCode, setPostalCode] = useState({ value: null, error: '' });
-  const [address, setAddress] = useState({ value: null, error: '' });
-  const [hasCameraPermission, setCameraPermission] = useState({
+  const [city, setCity] = useState({ name: 'city', value: null, error: '' });
+  const [postalCode, setPostalCode] = useState({
+    name: 'postalCode',
+    value: null,
+    error: '',
+  });
+  const [address, setAddress] = useState({
+    name: 'address',
     value: null,
     error: '',
   });
 
   const validateInput = () => {
-    const titleError = titleValidator(title.value);
-    const descriptionError = descriptionValidator(description.value);
-    const priceError = priceValidator(price.value);
-    const cityError = cityValidator(city.value);
-    const postalCodeError = postalCodeValidator(postalCode.value);
-    const addressError = addressValidator(address.value);
-    if (titleError) {
-      setTitle({ ...title, error: titleError });
-    }
-    if (descriptionError) {
-      setDescription({ ...description, error: descriptionError });
-    }
-    if (priceError) {
-      setPrice({ ...price, error: priceError });
-    }
-    if (cityError) {
-      setCity({ ...city, error: cityError });
-    }
-    if (postalCodeError) {
-      setPostalCode({ ...postalCode, error: postalCodeError });
-    }
-    if (addressError) {
-      setAddress({ ...address, error: addressError });
-    }
-    if (
-      !addressError &&
-      !postalCodeError &&
-      !cityError &&
-      !priceError &&
-      !descriptionError &&
-      !titleError
-    ) {
-      console.log(
-        `Request to graphQL API---------> 
-        \n Title: ${title.value} 
-        \n Description: ${description.value} 
-        \n Price: ${price.value} 
-        \n Country: ${user.country} 
-        \n City: ${city.value} 
-        \n PostalCode: ${postalCode.value} 
-        \n Address: ${address.value} 
-        \n userId: ${'uID1wwc2324fcr2'} 
-        \n jobCategoryId: ${'jobCatwdfwfd32f24f4f4f4'}`
-      );
-      //TODO: Add functionality to upload images for job
-      uploadJob({
-        variables: {
-          title: title.value,
-          description: description.value,
-          price: parseInt(price.value),
-          // images: images.uri,
-          country: user.country,
-          city: city.value,
-          postalCode: postalCode.value,
-          address: address.value,
-          userId: user.id,
-          jobCategoryId: 'jobCatTestingID_32f24f4f4f4',
-          token: user.token,
-        },
-      }).then(res => {
-        jobToGlobalState(res.data.addJob);
-      });
-    }
+    let errorState = false;
+    const formData = [
+      [title, setTitle],
+      [description, setDescription],
+      [price, setPrice],
+      [city, setCity],
+      [postalCode, setPostalCode],
+      [address, setAddress],
+    ];
+    formData.forEach(field => {
+      console.log(`field`, field);
+      const error = validate[field[0].name](field[0].value);
+      // if error we call the second element of the array "field" that is the state setter
+      if (error) {
+        field[1]({ ...field[0], error });
+        errorState = true;
+      }
+    });
+    return errorState;
   };
 
   const showAlert = () => {
@@ -173,7 +91,6 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
   };
 
   const getImagePermission = async () => {
-    //Only neccessary for ios
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== 'granted') {
@@ -192,7 +109,6 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
     });
     if (!result.cancelled) {
       setImage({ ...images, uri: result.uri });
-      //setImage({ ...images, uri: [...images.uri, result.uri] });
     }
   };
 
@@ -203,26 +119,33 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
 
   const userJobs =
     user.jobs.length > 0 ? (
-      user.jobs.map(job => {
-        return (
-          <Card key={job.id} style={styles.jobCard}>
-            <Card.Content>
-              <Title>{job.title}</Title>
-              <Paragraph>{job.description}</Paragraph>
-              <Paragraph>{job.price} EUR</Paragraph>
-            </Card.Content>
-            <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
-            <View style={styles.actionButtonContainer}>
-              <Card.Actions>
-                <Button style={{ width: 100 }}>Edit</Button>
-              </Card.Actions>
-              <Card.Actions>
-                <Button>Delete</Button>
-              </Card.Actions>
-            </View>
-          </Card>
-        );
-      })
+      user.jobs.map(
+        (job: {
+          id: String;
+          title: String;
+          description: String;
+          price: Number;
+        }) => {
+          return (
+            <Card key={job.id} style={styles.jobCard}>
+              <Card.Content>
+                <Title>{job.title}</Title>
+                <Paragraph>{job.description}</Paragraph>
+                <Paragraph>{job.price} EUR</Paragraph>
+              </Card.Content>
+              <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+              <View style={styles.actionButtonContainer}>
+                <Card.Actions>
+                  <Button style={{ width: 100 }}>Edit</Button>
+                </Card.Actions>
+                <Card.Actions>
+                  <Button>Delete</Button>
+                </Card.Actions>
+              </View>
+            </Card>
+          );
+        }
+      )
     ) : (
       <View></View>
     );
@@ -242,7 +165,9 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               label="Title"
               returnKeyType="next"
               value={title.value}
-              onChangeText={text => setTitle({ value: text, error: '' })}
+              onChangeText={text =>
+                setTitle({ name: 'title', value: text, error: '' })
+              }
               error={!!title.error}
               errorText={title.error}
             />
@@ -251,17 +176,20 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               label="Description"
               returnKeyType="next"
               value={description.value}
-              onChangeText={text => setDescription({ value: text, error: '' })}
+              onChangeText={text =>
+                setDescription({ name: 'description', value: text, error: '' })
+              }
               error={!!description.error}
               errorText={description.error}
               multiline={true}
             />
             <TextInput
-              //TODO: Render currency code for the country the user belongs to
               label="Price"
               returnKeyType="next"
               value={price.value}
-              onChangeText={text => setPrice({ value: text, error: '' })}
+              onChangeText={text =>
+                setPrice({ name: 'price', value: text, error: '' })
+              }
               error={!!price.error}
               errorText={price.error}
               keyboardType={'numeric'}
@@ -289,20 +217,22 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               <Text style={styles.text}>Press image to remove it </Text>
             )} */}
             <TextInput
-              //TODO: Render list of predefined cities based on country user belongs to
               label="City"
               returnKeyType="next"
               value={city.value}
-              onChangeText={text => setCity({ value: text, error: '' })}
+              onChangeText={text =>
+                setCity({ name: 'city', value: text, error: '' })
+              }
               error={!!city.error}
               errorText={city.error}
             />
             <TextInput
-              //TODO: Render list of predefined postalcodes based on city user belongs to
               label="PostalCode"
               returnKeyType="next"
               value={postalCode.value}
-              onChangeText={text => setPostalCode({ value: text, error: '' })}
+              onChangeText={text =>
+                setPostalCode({ name: 'postalCode', value: text, error: '' })
+              }
               error={!!postalCode.error}
               errorText={postalCode.error}
             />
@@ -310,11 +240,39 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               label="Address"
               returnKeyType="next"
               value={address.value}
-              onChangeText={text => setAddress({ value: text, error: '' })}
+              onChangeText={text =>
+                setAddress({ name: 'address', value: text, error: '' })
+              }
               error={!!address.error}
               errorText={address.error}
             />
-            <Button mode="contained" onPress={validateInput}>
+            <Button
+              mode="contained"
+              onPress={() => {
+                if (!validateInput()) {
+                  console.log(`inside validate upload activcated`);
+                  //TODO: Add functionality to upload images for job
+                  uploadJob({
+                    variables: {
+                      title: title.value,
+                      description: description.value,
+                      price: parseInt(price.value),
+                      // images: images.uri,
+                      country: user.country,
+                      city: city.value,
+                      postalCode: postalCode.value,
+                      address: address.value,
+                      userId: user.id,
+                      jobCategoryId: 'jobCatTestingID_32f24f4f4f4',
+                      token: user.token,
+                    },
+                  }).then(res => {
+                    if (res.data.addJob.id)
+                      return jobToGlobalState(res.data.addJob);
+                  });
+                }
+              }}
+            >
               PUBLISH JOB
             </Button>
           </Container>
