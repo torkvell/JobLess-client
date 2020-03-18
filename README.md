@@ -12,3 +12,6 @@ Detailed user stories:
 - As a jobless user I want to be able to see all jobs on a map
 - As a jobless user I want to be able to see more details about a job by clicking on the specific map pin for the job
 - As a jobless user I want to be able to contact the user which posted the job
+
+Wireframes:
+![wireframe1](https://github.com/torkvell/JobLess-client/blob/master/src/assets/localJob-1.png) 
