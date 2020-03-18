@@ -15,3 +15,5 @@ Detailed user stories:
 
 Wireframes:
 ![wireframe1](https://github.com/torkvell/JobLess-client/blob/master/src/assets/localJob-1.png) 
+
+![wireframe2](https://github.com/torkvell/JobLess-client/blob/master/src/assets/localJob-2.png) 
