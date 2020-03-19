@@ -15,6 +15,6 @@ Detailed user stories:
 - As a jobless user I want to be able to contact the user which posted the job
 
 Wireframes:
-![wireframe-login-signup](https://github.com/torkvell/JobLess-client/blob/master/src/assets/localJob-1.png) 
+![wireframe-login-signup](https://github.com/torkvell/JobLess-client/blob/master/src/assets/jobless-login-signup-wireframe.png) 
 
 ![wireframe-job-board](https://github.com/torkvell/JobLess-client/blob/master/src/assets/job-board-wireframe.png) 
