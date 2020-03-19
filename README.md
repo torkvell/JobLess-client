@@ -18,3 +18,11 @@ Wireframes:
 ![wireframe-login-signup](https://github.com/torkvell/JobLess-client/blob/master/src/assets/jobless-login-signup-wireframe.png) 
 
 ![wireframe-job-board](https://github.com/torkvell/JobLess-client/blob/master/src/assets/job-board-wireframe.png) 
+
+Navigation
+
+Non-Authorized
+![navigation-loggedOut](https://github.com/torkvell/JobLess-client/blob/master/src/assets/jobless-login-signup-wireframe.png) 
+
+Authorized
+![navigation-signedOut](https://github.com/torkvell/JobLess-client/blob/master/src/assets/job-board-wireframe.png) 
