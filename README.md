@@ -1,4 +1,4 @@
-Server code with GraphQL, Express and MongoDB can be found here: https://github.com/torkvell/JobLess-server
+Server code with Express, GraphQL and MongoDB can be found here: https://github.com/torkvell/JobLess-server
 
 Main user stories:
 
