@@ -6,12 +6,12 @@ This project was build in a few weeks as a means to learn new technology. Develo
 
 * [Server](#server-code)
 * [User Stories](#user-stories)
-⋅⋅* [Main user stories](#user-stories)
-⋅⋅* [Detailed user stories](#detailed-user-stories)
+  * [Main user stories](#user-stories)
+  * [Detailed user stories](#detailed-user-stories)
 * [Wireframes](#wireframes)
 * [Navigation](#navigation)
-⋅⋅* [Non-authorized](#non-authorized)
-⋅⋅* [Authorized](#authorized)
+  * [Non-authorized](#non-authorized)
+  * [Authorized](#authorized)
 
 
 ## Server code
