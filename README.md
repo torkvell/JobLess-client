@@ -4,7 +4,7 @@ This project was build in a few weeks as a means to learn new technology. Develo
 
 # Table of Content
 
-1. [Server](##Server code)
+1. [Server](#server-code)
 2. User Stories
 ⋅⋅* Main user stories
 ⋅⋅* Detailed user stories
