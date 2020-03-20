@@ -1,6 +1,13 @@
-## Welcome to JobLess!
+# Welcome to JobLess!
 
 This project was build in a few weeks as a means to learn new technology. Development is a never ending process, a lof of features still has to be built. Some files contain TypeScript others are built purely in JavaScript to speed up development. The idea of this project is to build a platform for jobless people to find small work tasks in their area. At the same time also provide a platform for private people/helpers to post small work tasks that can pay the jobless people.
+
+# Table of Content
+
+1. [Server](##Server code)
+2. User Stories
+⋅⋅* Main user stories
+⋅⋅* Detailed user stories
 
 ## Server code
 
