@@ -2,12 +2,17 @@
 
 This project was build in a few weeks as a means to learn new technology. Development is a never ending process, a lof of features still has to be built. Some files contain TypeScript others are built purely in JavaScript to speed up development. The idea of this project is to build a platform for jobless people to find small work tasks in their area. At the same time also provide a platform for private people/helpers to post small work tasks that can pay the jobless people.
 
-# Table of Content
+## Table of Content
 
-1. [Server](#server-code)
-2. User Stories
-⋅⋅* Main user stories
-⋅⋅* Detailed user stories
+* [Server](#server-code)
+* [User Stories](#user-stories)
+⋅⋅* [Main user stories](#user-stories)
+⋅⋅* [Detailed user stories](#detailed-user-stories)
+* [Wireframes](#wireframes)
+* [Navigation](#navigation)
+⋅⋅* [Non-authorized](#non-authorized)
+⋅⋅* [Authorized](#authorized)
+
 
 ## Server code
 
