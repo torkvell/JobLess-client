@@ -8,7 +8,6 @@ import {
   ScrollView,
   TouchableHighlight,
   Image,
-  Text,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
@@ -34,7 +33,7 @@ type Props = {
 };
 
 const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
-  const [uploadJob] = useMutation(ADD_JOB_MUTATION);
+  const [uploadJob, { data }] = useMutation(ADD_JOB_MUTATION);
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState({ name: 'title', value: null, error: '' });
   const [description, setDescription] = useState({
@@ -217,7 +216,9 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
                 })}
             </View>
             {images.uri.length >= 1 && (
-              <Text style={styles.text}>Press image to remove it </Text>
+              <Paragraph style={styles.text}>
+                Press image to remove it
+              </Paragraph>
             )}
             <TextInput
               label="City"
@@ -253,7 +254,6 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               mode="contained"
               onPress={() => {
                 if (!validateInput()) {
-                  console.log(`inside validate upload activcated`);
                   //TODO: Add functionality to upload images for job
                   uploadJob({
                     variables: {
@@ -270,7 +270,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
                       token: user.token,
                     },
                   }).then(res => {
-                    if (res.data.addJob.id)
+                    if (res.data.addJob)
                       return jobToGlobalState(res.data.addJob);
                   });
                 }
@@ -278,6 +278,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
             >
               PUBLISH JOB
             </Button>
+            <Paragraph>{data && 'Job is now published'}</Paragraph>
           </Container>
         </ScrollView>
       </Modal>
