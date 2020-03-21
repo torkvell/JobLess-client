@@ -6,6 +6,9 @@ import {
   Alert,
   Linking,
   ScrollView,
+  TouchableHighlight,
+  Image,
+  Text,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
@@ -40,7 +43,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
     error: '',
   });
   const [price, setPrice] = useState({ name: 'price', value: null, error: '' });
-  const [images, setImage] = useState({ uri: null, error: '' });
+  const [images, setImage] = useState({ uri: [], error: '' });
   const [city, setCity] = useState({ name: 'city', value: null, error: '' });
   const [postalCode, setPostalCode] = useState({
     name: 'postalCode',
@@ -108,7 +111,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
       quality: 1,
     });
     if (!result.cancelled) {
-      setImage({ ...images, uri: result.uri });
+      setImage({ ...images, uri: [...images.uri, result.uri] });
     }
   };
 
@@ -197,7 +200,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
             <Button icon="camera" mode="contained" onPress={getImagePermission}>
               ADD IMAGE
             </Button>
-            {/* <View style={styles.imageContainer}>
+            <View style={styles.imageContainer}>
               {images.uri.length >= 1 &&
                 images.uri.map(imageURI => {
                   return (
@@ -215,7 +218,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
             </View>
             {images.uri.length >= 1 && (
               <Text style={styles.text}>Press image to remove it </Text>
-            )} */}
+            )}
             <TextInput
               label="City"
               returnKeyType="next"
