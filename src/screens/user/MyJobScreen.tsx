@@ -18,7 +18,7 @@ import Button from '../../components/Button';
 import { connect } from 'react-redux';
 import { MaterialIcons } from '@expo/vector-icons';
 import TextInput from '../../components/TextInput';
-import { Card, Title, Paragraph } from 'react-native-paper';
+import { Card, Title, Paragraph, Snackbar } from 'react-native-paper';
 import { useMutation } from '@apollo/react-hooks';
 import { validate } from '../../core/utils';
 import { Navigation } from '../../types';
@@ -54,6 +54,18 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
     value: null,
     error: '',
   });
+  const [snackBarVisible, setSnackBarVisibility] = useState({ value: true });
+
+  const clearForm = () => {
+    setSnackBarVisibility({ ...snackBarVisible, value: false });
+    setTitle({ ...title, value: null });
+    setDescription({ ...description, value: null });
+    setPrice({ ...price, value: null });
+    setImage({ ...images, uri: [] });
+    setCity({ ...city, value: null });
+    setPostalCode({ ...postalCode, value: null });
+    setAddress({ ...address, value: null });
+  };
 
   const validateInput = () => {
     let errorState = false;
@@ -275,13 +287,25 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
                         type: 'JOB_PUBLISHED',
                         payload: res.data.addJob,
                       });
+                    setSnackBarVisibility({ ...snackBarVisible, value: true });
                   });
                 }
               }}
             >
               PUBLISH JOB
             </Button>
-            <Paragraph>{data && 'Job is now published'}</Paragraph>
+            {data && (
+              <Snackbar
+                duration={2000}
+                visible={snackBarVisible.value}
+                onDismiss={() => {
+                  setModalOpen(false);
+                  clearForm();
+                }}
+              >
+                Job successfully published!
+              </Snackbar>
+            )}
           </Container>
         </ScrollView>
       </Modal>
