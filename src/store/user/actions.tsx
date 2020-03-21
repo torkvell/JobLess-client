@@ -1,5 +1,5 @@
 /*--------------------LOGIN--------------------*/
-
+//This example is just for demonstration purposes to show how dispatch types can be reused by creating a thunk
 export function loginThunk(data) {
   return function(dispatch) {
     if (data) return dispatch(loginSuccess(data));
@@ -14,7 +14,7 @@ function loginSuccess(data) {
 }
 
 /*--------------------LOGOUT--------------------*/
-
+//This example is just for demonstration purposes to show how dispatch types can be reused by creating a thunk
 export function logOut() {
   return async function(dispatch) {
     dispatch(logOutSuccess());
@@ -26,15 +26,7 @@ function logOutSuccess() {
 }
 
 /*--------------------SIGN UP--------------------*/
-//No dispatch needed. After sign up success user gets redirected to login screen
+//No dispatch needed. After sign up success we redirected user to login screen
 
 /*--------------------ADD JOB--------------------*/
-export function jobToGlobalState(job) {
-  return async function(dispatch) {
-    dispatch(jobPublished(job));
-  };
-}
-
-function jobPublished(job) {
-  return { type: 'JOB_PUBLISHED', payload: job };
-}
+//Dispatched directly from component as normally

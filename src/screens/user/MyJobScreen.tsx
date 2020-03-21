@@ -23,16 +23,16 @@ import { useMutation } from '@apollo/react-hooks';
 import { validate } from '../../core/utils';
 import { Navigation } from '../../types';
 import { theme } from '../../core/theme';
-import { jobToGlobalState } from '../../store/user/actions';
 import { ADD_JOB_MUTATION } from '../../core/mutations';
 
 type Props = {
   navigation: Navigation;
   user: { country: String; id: String; jobs: []; token: String };
   jobToGlobalState: (job: Object) => void;
+  dispatch: (type: any, data?: any) => void;
 };
 
-const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
+const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
   const [uploadJob, { data }] = useMutation(ADD_JOB_MUTATION);
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState({ name: 'title', value: null, error: '' });
@@ -271,7 +271,10 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
                     },
                   }).then(res => {
                     if (res.data.addJob)
-                      return jobToGlobalState(res.data.addJob);
+                      dispatch({
+                        type: 'JOB_PUBLISHED',
+                        payload: res.data.addJob,
+                      });
                   });
                 }
               }}
@@ -332,6 +335,4 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-export default memo(
-  connect(mapStateToProps, { jobToGlobalState })(MyJobScreen)
-);
+export default memo(connect(mapStateToProps)(MyJobScreen));
