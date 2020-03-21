@@ -73,7 +73,7 @@ const LoginScreen = ({ navigation, loginThunk }: Props) => {
           <View style={styles.submitContainer}>
             {error && (
               <Text style={styles.error}>
-                {error ? console.log(error) : 'Error'}
+                {error.graphQLErrors.map(({ message }) => ({ message }))}
               </Text>
             )}
             <Button
