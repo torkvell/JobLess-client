@@ -29,7 +29,7 @@ const RegisterScreenPage1 = ({ navigation }: Props) => {
       <Button
         mode="outlined"
         onPress={() =>
-          navigation.navigate('RegisterScreenPage2', { jobless: 'false' })
+          navigation.navigate('RegisterScreenPage2', { jobless: false })
         }
       >
         I'm a job publisher

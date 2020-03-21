@@ -99,7 +99,7 @@ const RegisterScreenPage2 = ({ navigation, route }: Props) => {
           <View style={styles.submitContainer}>
             {error && (
               <Text style={styles.error}>
-                {error.graphQLErrors ? error.graphQLErrors[0].message : 'Error'}
+                {error.graphQLErrors.map(({ message }) => message)}
               </Text>
             )}
             <Button
