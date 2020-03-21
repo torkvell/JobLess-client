@@ -11,15 +11,15 @@ import { validate } from '../../core/utils';
 import { Navigation } from '../../types';
 import { Mutation } from 'react-apollo';
 import { connect } from 'react-redux';
-import { loginThunk } from '../../store/user/actions';
 import { LOGIN_USER } from '../../core/mutations';
 
 type Props = {
   navigation: Navigation;
   loginThunk: (data: Object) => void;
+  dispatch: (type: any, data?: any) => void;
 };
 
-const LoginScreen = ({ navigation, loginThunk }: Props) => {
+const LoginScreen = ({ navigation, dispatch }: Props) => {
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
 
@@ -87,8 +87,12 @@ const LoginScreen = ({ navigation, loginThunk }: Props) => {
                     },
                   }).then(response => {
                     if (response.data) {
-                      loginThunk(response.data);
-                      //there is no need to navigate the user. The navigation container will change to signedIn from redux props
+                      dispatch({
+                        type: 'LOGIN_SUCCESS',
+                        payload: response.data,
+                      });
+                      /*There is no need to navigate the user from here.
+                      The navigation container will change to signedIn from redux props*/
                     }
                   });
                 }
@@ -136,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(connect(null, { loginThunk })(LoginScreen));
+export default memo(connect(null)(LoginScreen));
