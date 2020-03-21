@@ -6,6 +6,8 @@ import {
   Alert,
   Linking,
   ScrollView,
+  TouchableHighlight,
+  Image,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
@@ -31,7 +33,7 @@ type Props = {
 };
 
 const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
-  const [uploadJob] = useMutation(ADD_JOB_MUTATION);
+  const [uploadJob, { data }] = useMutation(ADD_JOB_MUTATION);
   const [modalOpen, setModalOpen] = useState(false);
   const [title, setTitle] = useState({ name: 'title', value: null, error: '' });
   const [description, setDescription] = useState({
@@ -40,7 +42,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
     error: '',
   });
   const [price, setPrice] = useState({ name: 'price', value: null, error: '' });
-  const [images, setImage] = useState({ uri: null, error: '' });
+  const [images, setImage] = useState({ uri: [], error: '' });
   const [city, setCity] = useState({ name: 'city', value: null, error: '' });
   const [postalCode, setPostalCode] = useState({
     name: 'postalCode',
@@ -108,7 +110,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
       quality: 1,
     });
     if (!result.cancelled) {
-      setImage({ ...images, uri: result.uri });
+      setImage({ ...images, uri: [...images.uri, result.uri] });
     }
   };
 
@@ -197,7 +199,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
             <Button icon="camera" mode="contained" onPress={getImagePermission}>
               ADD IMAGE
             </Button>
-            {/* <View style={styles.imageContainer}>
+            <View style={styles.imageContainer}>
               {images.uri.length >= 1 &&
                 images.uri.map(imageURI => {
                   return (
@@ -214,8 +216,10 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
                 })}
             </View>
             {images.uri.length >= 1 && (
-              <Text style={styles.text}>Press image to remove it </Text>
-            )} */}
+              <Paragraph style={styles.text}>
+                Press image to remove it
+              </Paragraph>
+            )}
             <TextInput
               label="City"
               returnKeyType="next"
@@ -250,7 +254,6 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
               mode="contained"
               onPress={() => {
                 if (!validateInput()) {
-                  console.log(`inside validate upload activcated`);
                   //TODO: Add functionality to upload images for job
                   uploadJob({
                     variables: {
@@ -267,7 +270,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
                       token: user.token,
                     },
                   }).then(res => {
-                    if (res.data.addJob.id)
+                    if (res.data.addJob)
                       return jobToGlobalState(res.data.addJob);
                   });
                 }
@@ -275,6 +278,7 @@ const MyJobScreen = ({ navigation, user, jobToGlobalState }: Props) => {
             >
               PUBLISH JOB
             </Button>
+            <Paragraph>{data && 'Job is now published'}</Paragraph>
           </Container>
         </ScrollView>
       </Modal>
