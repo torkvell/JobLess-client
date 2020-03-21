@@ -1,13 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Mutation } from 'react-apollo';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Picker,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import CountryPicker from 'react-native-country-picker-modal';
 import Background from '../../components/Background';
 import Logo from '../../components/Logo';
@@ -16,26 +9,25 @@ import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 import BackButton from '../../components/BackButton';
 import { theme } from '../../core/theme';
-import { Navigation } from '../../types';
-// import {
-//   emailValidator,
-//   passwordValidator,
-//   nameValidator,
-// } from '../../core/utils';
+import { Navigation, Route } from '../../types';
 import { validate } from '../../core/utils';
 import { REGISTER_USER } from '../../core/mutations';
 
 type Props = {
   navigation: Navigation;
+  route: Route;
 };
 
-const RegisterScreen = ({ navigation }: Props) => {
+const RegisterScreenPage2 = ({ navigation, route }: Props) => {
   const [name, setName] = useState({ value: '', error: '' });
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
   const [countryCode, setCountryCode] = useState(null);
   const [country, setCountry] = useState({ value: null, error: '' });
-  const [jobless, setJobless] = useState({ value: true, error: '' });
+  const [jobless] = useState({
+    value: route.params.jobless,
+    error: '',
+  });
 
   const onSelect = country => {
     setCountryCode(country.cca2);
@@ -55,27 +47,9 @@ const RegisterScreen = ({ navigation }: Props) => {
     return true;
   };
 
-  /*TODO: The default RN picker renders badly on ios, therefore have to render different picker components
-  A better UX can be done by placing the picker option as a separate screen with two buttons instead*/
-  const CustomPicker =
-    Platform.OS === 'ios' ? (
-      <Text>TODO</Text>
-    ) : (
-      <Picker
-        selectedValue={jobless.value}
-        onValueChange={(itemValue, itemIndex) => {
-          const newValue = itemValue === 'true' ? true : false;
-          setJobless({ value: newValue, error: '' });
-        }}
-      >
-        <Picker.Item label="I am jobless" value="true" />
-        <Picker.Item label="I want to post jobs" value="false" />
-      </Picker>
-    );
-
   return (
     <Background>
-      <BackButton goBack={() => navigation.navigate('WelcomeScreen')} />
+      <BackButton goBack={() => navigation.navigate('RegisterScreenPage1')} />
       <Logo />
       <Header>Create Account</Header>
       <TextInput
@@ -107,7 +81,6 @@ const RegisterScreen = ({ navigation }: Props) => {
         errorText={password.error}
         secureTextEntry
       />
-      <View style={styles.pickerContainer}>{CustomPicker}</View>
       <CountryPicker
         {...{
           countryCode,
@@ -125,7 +98,9 @@ const RegisterScreen = ({ navigation }: Props) => {
         {(addUser, { data, error }) => (
           <View style={styles.submitContainer}>
             {error && (
-              <Text style={styles.error}>{error.graphQLErrors[0].message}</Text>
+              <Text style={styles.error}>
+                {error.graphQLErrors ? error.graphQLErrors[0].message : 'Error'}
+              </Text>
             )}
             <Button
               mode="contained"
@@ -202,4 +177,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(RegisterScreen);
+export default memo(RegisterScreenPage2);

@@ -4,7 +4,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import {
   WelcomeScreen,
   LoginScreen,
-  RegisterScreen,
+  RegisterScreenPage1,
+  RegisterScreenPage2,
   ForgotPasswordScreen,
 } from '../screens/welcome';
 
@@ -16,7 +17,14 @@ function SignedOutApp() {
       <Stack.Navigator initialRouteName="WelcomeScreen" headerMode="none">
         <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+        <Stack.Screen
+          name="RegisterScreenPage1"
+          component={RegisterScreenPage1}
+        />
+        <Stack.Screen
+          name="RegisterScreenPage2"
+          component={RegisterScreenPage2}
+        />
         <Stack.Screen
           name="ForgotPasswordScreen"
           component={ForgotPasswordScreen}

@@ -21,7 +21,7 @@ const WelcomeScreen = ({ navigation }: Props) => (
     </Button>
     <Button
       mode="outlined"
-      onPress={() => navigation.navigate('RegisterScreen')}
+      onPress={() => navigation.navigate('RegisterScreenPage1')}
     >
       Sign Up
     </Button>
