@@ -312,13 +312,16 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
       <Button icon="plus" mode="contained" onPress={() => setModalOpen(true)}>
         POST JOB
       </Button>
+      {user.jobs.length < 1 && (
+        <Paragraph>You have not published any jobs yet</Paragraph>
+      )}
       <ScrollView showsVerticalScrollIndicator={false}>{userJobs}</ScrollView>
     </Background>
   );
 };
 
 const styles = StyleSheet.create({
-  jobCard: { height: 380, maxWidth: 340, marginBottom: 50 },
+  jobCard: { height: 400, maxWidth: 340, marginBottom: 50 },
   modalToggle: {
     justifyContent: 'center',
     alignItems: 'center',
