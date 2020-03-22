@@ -71,11 +71,12 @@ const LoginScreen = ({ navigation, dispatch }: Props) => {
       <Mutation mutation={LOGIN_USER}>
         {(login, { data, error }) => (
           <View style={styles.submitContainer}>
-            {error && (
-              <Text style={styles.error}>
-                {error.graphQLErrors.map(({ message }) => ({ message }))}
-              </Text>
-            )}
+            {error &&
+              error.graphQLErrors.map(({ message }) => (
+                <Text key={message} style={styles.error}>
+                  {message}
+                </Text>
+              ))}
             <Button
               mode="contained"
               onPress={() => {
