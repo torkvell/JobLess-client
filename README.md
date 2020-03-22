@@ -12,7 +12,7 @@ This project was build in a few weeks as a means to learn new technology. Develo
 * [Navigation](#navigation)
   * [Non-authorized](#non-authorized)
   * [Authorized](#authorized)
-
+* [Demo](#demo)
 
 ## Server code
 
