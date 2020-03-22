@@ -48,3 +48,7 @@ https://github.com/torkvell/JobLess-server
 ### Authorized
 
 ![navigation-signedOut](https://github.com/torkvell/JobLess-client/blob/master/src/assets/navigation-loggedIn.png) 
+
+## Demo
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
