@@ -24,6 +24,7 @@ import { validate } from '../../core/utils';
 import { Navigation } from '../../types';
 import { theme } from '../../core/theme';
 import { ADD_JOB_MUTATION } from '../../core/mutations';
+import { ReactNativeFile } from 'apollo-upload-client';
 
 type Props = {
   navigation: Navigation;
@@ -267,28 +268,48 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
               onPress={() => {
                 if (!validateInput()) {
                   //TODO: Add functionality to upload images for job
-                  uploadJob({
-                    variables: {
-                      title: title.value,
-                      description: description.value,
-                      price: parseInt(price.value),
-                      // images: images.uri,
-                      country: user.country,
-                      city: city.value,
-                      postalCode: postalCode.value,
-                      address: address.value,
-                      userId: user.id,
-                      jobCategoryId: 'jobCatTestingID_32f24f4f4f4',
-                      token: user.token,
-                    },
-                  }).then(res => {
-                    if (res.data.addJob)
-                      dispatch({
-                        type: 'JOB_PUBLISHED',
-                        payload: res.data.addJob,
-                      });
-                    setSnackBarVisibility({ ...snackBarVisible, value: true });
+                  // const files = images.uri.map((uri, index) => {
+                  //   return new ReactNativeFile({
+                  //     uri: uri,
+                  //     name: `${index}a.jpg`,
+                  //     type: 'image/jpeg',
+                  //   });
+                  // });
+                  const file = new ReactNativeFile({
+                    uri: images.uri[0],
+                    name: 'picture.jpg',
+                    type: 'image/jpeg',
                   });
+                  try {
+                    uploadJob({
+                      variables: {
+                        title: title.value,
+                        description: description.value,
+                        price: parseInt(price.value),
+                        images: file,
+                        country: user.country,
+                        city: city.value,
+                        postalCode: postalCode.value,
+                        address: address.value,
+                        userId: user.id,
+                        jobCategoryId: 'jobCatTestingID_32f24f4f4f4',
+                        token: user.token,
+                      },
+                    }).then(res => {
+                      console.log(`error------------>`, res);
+                      if (res.data.addJob)
+                        dispatch({
+                          type: 'JOB_PUBLISHED',
+                          payload: res.data.addJob,
+                        });
+                      setSnackBarVisibility({
+                        ...snackBarVisible,
+                        value: true,
+                      });
+                    });
+                  } catch (err) {
+                    console.log(err);
+                  }
                 }
               }}
             >
