@@ -11,13 +11,12 @@ import { Platform } from 'react-native';
 import IP from './env';
 import App from './src';
 
-const cache = new InMemoryCache();
-
 const uploadLink = createUploadLink({
   uri: `http://${Platform.OS === 'ios' ? 'localhost' : IP}:4000/graphql`,
 });
 
-// apollo client setup
+const cache = new InMemoryCache();
+
 const client = new ApolloClient({
   cache,
   link: uploadLink,

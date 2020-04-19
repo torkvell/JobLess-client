@@ -24,6 +24,7 @@ import { validate } from '../../core/utils';
 import { Navigation } from '../../types';
 import { theme } from '../../core/theme';
 import { ADD_JOB_MUTATION } from '../../core/mutations';
+import { ReactNativeFile } from 'apollo-upload-client';
 
 type Props = {
   navigation: Navigation;
@@ -54,10 +55,10 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
     value: null,
     error: '',
   });
-  const [snackBarVisible, setSnackBarVisibility] = useState({ value: true });
-
+  const [snackBarSuccess, setSnackBarSuccess] = useState({ value: false });
+  const [snackBarError, setSnackBarError] = useState({ value: false });
   const clearForm = () => {
-    setSnackBarVisibility({ ...snackBarVisible, value: false });
+    setSnackBarSuccess({ ...snackBarSuccess, value: false });
     setTitle({ ...title, value: null });
     setDescription({ ...description, value: null });
     setPrice({ ...price, value: null });
@@ -267,45 +268,78 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
               onPress={() => {
                 if (!validateInput()) {
                   //TODO: Add functionality to upload images for job
-                  uploadJob({
-                    variables: {
-                      title: title.value,
-                      description: description.value,
-                      price: parseInt(price.value),
-                      // images: images.uri,
-                      country: user.country,
-                      city: city.value,
-                      postalCode: postalCode.value,
-                      address: address.value,
-                      userId: user.id,
-                      jobCategoryId: 'jobCatTestingID_32f24f4f4f4',
-                      token: user.token,
-                    },
-                  }).then(res => {
-                    if (res.data.addJob)
-                      dispatch({
-                        type: 'JOB_PUBLISHED',
-                        payload: res.data.addJob,
-                      });
-                    setSnackBarVisibility({ ...snackBarVisible, value: true });
+                  const files = images.uri.map((uri, index) => {
+                    return new ReactNativeFile({
+                      uri: uri,
+                      name: `${index}a.jpg`,
+                      type: 'image/jpeg',
+                    });
                   });
+                  console.log(`files------>`, files);
+                  try {
+                    uploadJob({
+                      variables: {
+                        title: title.value,
+                        description: description.value,
+                        price: parseInt(price.value),
+                        images: files,
+                        country: user.country,
+                        city: city.value,
+                        postalCode: postalCode.value,
+                        address: address.value,
+                        userId: user.id,
+                        jobCategoryId: 'jobCatTestingID_32f24f4f4f4',
+                        token: user.token,
+                      },
+                    }).then(res => {
+                      if (res.data.addJob) {
+                        console.log('response server', res);
+                        // dispatch({
+                        //   type: 'JOB_PUBLISHED',
+                        //   payload: res.data.addJob,
+                        // });
+                        setSnackBarSuccess({
+                          ...snackBarSuccess,
+                          value: true,
+                        });
+                      } else {
+                        console.log(`error------------>`, res);
+                        setSnackBarError({
+                          ...snackBarError,
+                          value: true,
+                        });
+                      }
+                    });
+                  } catch (err) {
+                    console.log(err);
+                  }
                 }
               }}
             >
               PUBLISH JOB
             </Button>
-            {data && (
-              <Snackbar
-                duration={2000}
-                visible={snackBarVisible.value}
-                onDismiss={() => {
-                  setModalOpen(false);
-                  clearForm();
-                }}
-              >
-                Job successfully published!
-              </Snackbar>
-            )}
+            <Snackbar
+              duration={2000}
+              visible={snackBarSuccess.value}
+              onDismiss={() => {
+                //setModalOpen(false);
+                //clearForm();
+              }}
+            >
+              Job successfully published!
+            </Snackbar>
+            <Snackbar
+              duration={2000}
+              visible={snackBarError.value}
+              onDismiss={() => {
+                setSnackBarError({
+                  ...snackBarError,
+                  value: false,
+                });
+              }}
+            >
+              Something went wrong
+            </Snackbar>
           </Container>
         </ScrollView>
       </Modal>
