@@ -31,12 +31,12 @@ export const ADD_JOB_MUTATION = gql`
       title
       description
       price
-      images
       city
       postalCode
       address
       userId
       jobCategoryId
+      imagePaths
     }
   }
 `;
