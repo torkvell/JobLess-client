@@ -25,6 +25,7 @@ import { Navigation } from '../../types';
 import { theme } from '../../core/theme';
 import { ADD_JOB_MUTATION } from '../../core/mutations';
 import { ReactNativeFile } from 'apollo-upload-client';
+import { SliderBox } from 'react-native-image-slider-box';
 
 type Props = {
   navigation: Navigation;
@@ -140,7 +141,9 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
           title: String;
           description: String;
           price: Number;
+          imagePaths: any;
         }) => {
+          const imagePaths = job.imagePaths.split(',');
           return (
             <Card key={job.id} style={styles.jobCard}>
               <Card.Content>
@@ -148,7 +151,7 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
                 <Paragraph>{job.description}</Paragraph>
                 <Paragraph>{job.price} EUR</Paragraph>
               </Card.Content>
-              <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+              <SliderBox images={imagePaths} />
               <View style={styles.actionButtonContainer}>
                 <Card.Actions>
                   <Button style={{ width: 100 }}>Edit</Button>
@@ -294,10 +297,10 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
                     }).then(res => {
                       if (res.data.addJob) {
                         console.log('response server', res);
-                        // dispatch({
-                        //   type: 'JOB_PUBLISHED',
-                        //   payload: res.data.addJob,
-                        // });
+                        dispatch({
+                          type: 'JOB_PUBLISHED',
+                          payload: res.data.addJob,
+                        });
                         setSnackBarSuccess({
                           ...snackBarSuccess,
                           value: true,
