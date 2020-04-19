@@ -141,7 +141,7 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
           title: String;
           description: String;
           price: Number;
-          imagePaths: any;
+          imagePaths: String;
         }) => {
           const imagePaths = job.imagePaths.split(',');
           return (
