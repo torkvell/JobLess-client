@@ -55,6 +55,7 @@ export const LOGIN_USER = gql`
         title
         description
         price
+        imagePaths
         city
         postalCode
         address
