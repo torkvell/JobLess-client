@@ -5,7 +5,7 @@ export const ADD_JOB_MUTATION = gql`
     $title: String!
     $description: String!
     $price: Int!
-    $images: Upload
+    $images: [Upload]
     $country: String!
     $city: String!
     $postalCode: String!
@@ -31,6 +31,7 @@ export const ADD_JOB_MUTATION = gql`
       title
       description
       price
+      images
       city
       postalCode
       address

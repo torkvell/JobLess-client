@@ -55,10 +55,10 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
     value: null,
     error: '',
   });
-  const [snackBarVisible, setSnackBarVisibility] = useState({ value: true });
-
+  const [snackBarSuccess, setSnackBarSuccess] = useState({ value: false });
+  const [snackBarError, setSnackBarError] = useState({ value: false });
   const clearForm = () => {
-    setSnackBarVisibility({ ...snackBarVisible, value: false });
+    setSnackBarSuccess({ ...snackBarSuccess, value: false });
     setTitle({ ...title, value: null });
     setDescription({ ...description, value: null });
     setPrice({ ...price, value: null });
@@ -268,25 +268,21 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
               onPress={() => {
                 if (!validateInput()) {
                   //TODO: Add functionality to upload images for job
-                  // const files = images.uri.map((uri, index) => {
-                  //   return new ReactNativeFile({
-                  //     uri: uri,
-                  //     name: `${index}a.jpg`,
-                  //     type: 'image/jpeg',
-                  //   });
-                  // });
-                  const file = new ReactNativeFile({
-                    uri: images.uri[0],
-                    name: 'picture.jpg',
-                    type: 'image/jpeg',
+                  const files = images.uri.map((uri, index) => {
+                    return new ReactNativeFile({
+                      uri: uri,
+                      name: `${index}a.jpg`,
+                      type: 'image/jpeg',
+                    });
                   });
+                  console.log(`files------>`, files);
                   try {
                     uploadJob({
                       variables: {
                         title: title.value,
                         description: description.value,
                         price: parseInt(price.value),
-                        images: file,
+                        images: files,
                         country: user.country,
                         city: city.value,
                         postalCode: postalCode.value,
@@ -296,16 +292,23 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
                         token: user.token,
                       },
                     }).then(res => {
-                      console.log(`error------------>`, res);
-                      if (res.data.addJob)
-                        dispatch({
-                          type: 'JOB_PUBLISHED',
-                          payload: res.data.addJob,
+                      if (res.data.addJob) {
+                        console.log('response server', res);
+                        // dispatch({
+                        //   type: 'JOB_PUBLISHED',
+                        //   payload: res.data.addJob,
+                        // });
+                        setSnackBarSuccess({
+                          ...snackBarSuccess,
+                          value: true,
                         });
-                      setSnackBarVisibility({
-                        ...snackBarVisible,
-                        value: true,
-                      });
+                      } else {
+                        console.log(`error------------>`, res);
+                        setSnackBarError({
+                          ...snackBarError,
+                          value: true,
+                        });
+                      }
                     });
                   } catch (err) {
                     console.log(err);
@@ -315,18 +318,28 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
             >
               PUBLISH JOB
             </Button>
-            {data && (
-              <Snackbar
-                duration={2000}
-                visible={snackBarVisible.value}
-                onDismiss={() => {
-                  setModalOpen(false);
-                  clearForm();
-                }}
-              >
-                Job successfully published!
-              </Snackbar>
-            )}
+            <Snackbar
+              duration={2000}
+              visible={snackBarSuccess.value}
+              onDismiss={() => {
+                //setModalOpen(false);
+                //clearForm();
+              }}
+            >
+              Job successfully published!
+            </Snackbar>
+            <Snackbar
+              duration={2000}
+              visible={snackBarError.value}
+              onDismiss={() => {
+                setSnackBarError({
+                  ...snackBarError,
+                  value: false,
+                });
+              }}
+            >
+              Something went wrong
+            </Snackbar>
           </Container>
         </ScrollView>
       </Modal>
