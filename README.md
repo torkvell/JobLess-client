@@ -12,7 +12,7 @@ This project was build in a few weeks as a means to learn new technology. Develo
 * [Navigation](#navigation)
   * [Non-authorized](#non-authorized)
   * [Authorized](#authorized)
-
+* [Demo](#demo)
 
 ## Server code
 
@@ -51,4 +51,4 @@ https://github.com/torkvell/JobLess-server
 
 ## Demo
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
+[![Youtube video demo for JobLess](https://github.com/torkvell/JobLess-client/blob/master/src/assets/youtube-image-jobless.png)](https://www.youtube.com/watch?v=YfPgOnXT1bs)
