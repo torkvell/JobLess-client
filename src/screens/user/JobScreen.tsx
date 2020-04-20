@@ -1,13 +1,17 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
+import MapView from 'react-native-maps';
+import Marker from 'react-native-maps';
+import gql from 'graphql-tag';
+import { connect } from 'react-redux';
+import { Text, View, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { Card, Title, Paragraph } from 'react-native-paper';
+import { SliderBox } from 'react-native-image-slider-box';
+import { useQuery } from '@apollo/react-hooks';
+import BackgroundJobBoard from '../../components/BackgroundJobBoard';
 import Background from '../../components/Background';
 import Button from '../../components/Button';
 import { Navigation } from '../../types';
-import { connect } from 'react-redux';
-import { Text, View, StyleSheet, ScrollView } from 'react-native';
-import { Card, Title, Paragraph } from 'react-native-paper';
-import { SliderBox } from 'react-native-image-slider-box';
-import gql from 'graphql-tag';
-import { useQuery } from '@apollo/react-hooks';
+import { Appbar } from 'react-native-paper';
 
 type Props = {
   navigation: Navigation;
@@ -32,7 +36,15 @@ const GET_JOBS = gql`
 `;
 
 const JobScreen = ({ navigation, user }: Props) => {
-  console.log('user', user);
+  var markers = [
+    {
+      latitude: 52.379189,
+      longitude: 4.899431,
+      title: 'Foo Place',
+      subtitle: '1234 Foo Drive',
+    },
+  ];
+  const [mapVisible, setMapVisibility] = useState(false);
   const { loading, error, data } = useQuery(GET_JOBS, {
     variables: { country: user.country },
   });
@@ -73,10 +85,62 @@ const JobScreen = ({ navigation, user }: Props) => {
       <Text>No jobs available</Text>
     </View>
   );
+  const renderMap = () => {
+    setMapVisibility(true);
+  };
+  const renderList = () => {
+    setMapVisibility(false);
+  };
   return (
-    <Background>
-      <ScrollView showsVerticalScrollIndicator={false}>{userJobs}</ScrollView>
-    </Background>
+    <View style={{ flex: 1, width: '100%' }}>
+      <Appbar
+        style={{
+          height: '10%',
+          paddingTop: '13.5%',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Appbar.Action icon="format-line-spacing" onPress={renderList} />
+        <Appbar.Action icon="filter-outline" onPress={this._handleSearch} />
+        <Appbar.Action icon="map" onPress={renderMap} />
+      </Appbar>
+      <BackgroundJobBoard style={{ marginTop: 0 }}>
+        <ScrollView showsVerticalScrollIndicator={false}>{userJobs}</ScrollView>
+      </BackgroundJobBoard>
+      {mapVisible ? (
+        <MapView
+          style={styles.mapStyle}
+          initialRegion={{
+            latitude: 52.379189,
+            longitude: 4.899431,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        >
+          {data.jobs.map((job, index) => {
+            //Just for demonstration purposes - this component is still work in progress
+            return (
+              <MapView.Marker
+                key={index}
+                coordinate={{
+                  latitude: 52.367012 + (index * Math.random()) / 100,
+                  longitude: 4.883395 + (index * Math.random()) / 100,
+                }}
+                title={job.title}
+                description={job.description}
+              />
+            );
+          })}
+        </MapView>
+      ) : (
+        <View></View>
+      )}
+      {/* <Marker
+        coordinate={{ latitude: 52.379189, longitude: 4.899431 }}
+        title={'title'}
+        description={'Description'}
+      /> */}
+    </View>
   );
 };
 
@@ -84,6 +148,10 @@ const styles = StyleSheet.create({
   jobCard: { height: 400, maxWidth: 340, marginBottom: 50 },
   actionButtonContainer: {
     flexDirection: 'row',
+  },
+  mapStyle: {
+    width: Dimensions.get('window').width,
+    height: 725,
   },
 });
 
