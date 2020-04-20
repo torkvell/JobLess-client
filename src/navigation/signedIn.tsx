@@ -21,7 +21,7 @@ function SignedInApp(props) {
         inactiveColor="#f0edf0"
         barStyle={{ backgroundColor: theme.colors.primary }}
       >
-        {props.user.jobless === 'true' ? (
+        {props.user.jobless === true ? (
           <Tab.Screen
             name="Jobs"
             component={JobScreen}
