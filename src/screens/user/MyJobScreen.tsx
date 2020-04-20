@@ -30,7 +30,6 @@ import { SliderBox } from 'react-native-image-slider-box';
 type Props = {
   navigation: Navigation;
   user: { country: String; id: String; jobs: []; token: String };
-  jobToGlobalState: (job: Object) => void;
   dispatch: (type: any, data?: any) => void;
 };
 
