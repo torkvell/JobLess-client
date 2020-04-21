@@ -324,8 +324,8 @@ const MyJobScreen = ({ navigation, user, dispatch }: Props) => {
               duration={2000}
               visible={snackBarSuccess.value}
               onDismiss={() => {
-                //setModalOpen(false);
-                //clearForm();
+                setModalOpen(false);
+                clearForm();
               }}
             >
               Job successfully published!
